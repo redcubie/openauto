@@ -38,6 +38,7 @@ namespace f1x {
           void MediaPlaybackStatusService::start() {
             strand_.dispatch([this, self = this->shared_from_this()]() {
               OPENAUTO_LOG(info) << "[MediaPlaybackStatusService] start()";
+              channel_->receive(this->shared_from_this());
             });
           }
 
@@ -86,6 +87,17 @@ namespace f1x {
             channel_->receive(this->shared_from_this());
           }
 
+          void MediaPlaybackStatusService::onMetadataUpdate(
+              const aap_protobuf::service::mediaplayback::message::MediaPlaybackMetadata &metadata) {
+            OPENAUTO_LOG(info) << "[MediaPlaybackStatusService] onMetadataUpdate()";
+            channel_->receive(this->shared_from_this());
+          }
+
+          void MediaPlaybackStatusService::onPlaybackUpdate(
+              const aap_protobuf::service::mediaplayback::message::MediaPlaybackStatus &playback) {
+            OPENAUTO_LOG(info) << "[MediaPlaybackStatusService] onPlaybackUpdate()";
+            channel_->receive(this->shared_from_this());
+          }
 
           void MediaPlaybackStatusService::onChannelError(const aasdk::error::Error &e) {
             OPENAUTO_LOG(error) << "[MediaPlaybackStatusService] onChannelError(): " << e.what();
