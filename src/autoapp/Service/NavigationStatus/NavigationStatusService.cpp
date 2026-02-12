@@ -35,6 +35,7 @@ namespace f1x::openauto::autoapp::service::navigationstatus {
   void NavigationStatusService::start() {
     strand_.dispatch([this, self = this->shared_from_this()]() {
       OPENAUTO_LOG(info) << "[NavigationStatusService] start()";
+      channel_->receive(this->shared_from_this());
     });
   }
 
@@ -63,7 +64,7 @@ namespace f1x::openauto::autoapp::service::navigationstatus {
     auto *service = response.add_channels();
     service->set_id(static_cast<uint32_t>(channel_->getId()));
 
-    auto *navigationStatus = service->mutable_navigation_status_service();
+    auto navigationStatus = service->mutable_navigation_status_service();
     (void)navigationStatus; // Suppress unused variable warning
   }
 
@@ -87,20 +88,33 @@ namespace f1x::openauto::autoapp::service::navigationstatus {
 
   void NavigationStatusService::onStatusUpdate(
       const aap_protobuf::service::navigationstatus::message::NavigationStatus &navStatus) {
+    OPENAUTO_LOG(info) << "[NavigationStatusService] onStatusUpdate()";
     channel_->receive(this->shared_from_this());
   }
 
 
   void NavigationStatusService::onTurnEvent(
       const aap_protobuf::service::navigationstatus::message::NavigationNextTurnEvent &turnEvent) {
+    OPENAUTO_LOG(info) << "[NavigationStatusService] onTurnEvent()";
     channel_->receive(this->shared_from_this());
   }
 
   void NavigationStatusService::onDistanceEvent(
       const aap_protobuf::service::navigationstatus::message::NavigationNextTurnDistanceEvent &distanceEvent) {
+    OPENAUTO_LOG(info) << "[NavigationStatusService] onDistanceEvent()";
     channel_->receive(this->shared_from_this());
   }
 
+  void NavigationStatusService::onStateUpdate(const aap_protobuf::service::navigationstatus::message::NavigationState &navState) {
+    OPENAUTO_LOG(info) << "[NavigationStatusService] onStateUpdate()";
+    channel_->receive(this->shared_from_this());
+  }
+
+  void NavigationStatusService::onCurrentPosition(
+      const aap_protobuf::service::navigationstatus::message::NavigationCurrentPosition &currentPosition) {
+    OPENAUTO_LOG(info) << "[NavigationStatusService] onCurrentPosition()";
+    channel_->receive(this->shared_from_this());
+  }
 
   void NavigationStatusService::onChannelError(const aasdk::error::Error &e) {
     OPENAUTO_LOG(error) << "[NavigationStatusService] onChannelError(): " << e.what();

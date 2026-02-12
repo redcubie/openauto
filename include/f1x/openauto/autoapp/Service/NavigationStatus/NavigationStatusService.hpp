@@ -49,6 +49,8 @@ namespace f1x {
             void onStatusUpdate(const aap_protobuf::service::navigationstatus::message::NavigationStatus &navStatus) override;
             void onTurnEvent(const aap_protobuf::service::navigationstatus::message::NavigationNextTurnEvent &turnEvent) override;
             void onDistanceEvent(const aap_protobuf::service::navigationstatus::message::NavigationNextTurnDistanceEvent &distanceEvent) override;
+            void onStateUpdate(const aap_protobuf::service::navigationstatus::message::NavigationState &navState) override;
+            void onCurrentPosition(const aap_protobuf::service::navigationstatus::message::NavigationCurrentPosition &currentPosition) override;
 
           private:
             using std::enable_shared_from_this<NavigationStatusService>::shared_from_this;
