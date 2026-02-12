@@ -38,6 +38,7 @@ namespace f1x {
           void PhoneStatusService::start() {
             strand_.dispatch([this, self = this->shared_from_this()]() {
               OPENAUTO_LOG(info) << "[PhoneStatusService] start()";
+              channel_->receive(this->shared_from_this());
             });
           }
 
@@ -86,6 +87,10 @@ namespace f1x {
             channel_->receive(this->shared_from_this());
           }
 
+          void PhoneStatusService::onPhoneStatusEvent(const aap_protobuf::service::phonestatus::message::PhoneStatus &status) {
+            OPENAUTO_LOG(info) << "[PhoneStatusService] onPhoneStatusEvent()";
+            channel_->receive(this->shared_from_this());
+          };
 
           void PhoneStatusService::onChannelError(const aasdk::error::Error &e) {
             OPENAUTO_LOG(error) << "[PhoneStatusService] onChannelError(): " << e.what();

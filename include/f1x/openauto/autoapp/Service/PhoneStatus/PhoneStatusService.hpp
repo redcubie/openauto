@@ -44,6 +44,8 @@ namespace f1x {
 
             void onChannelOpenRequest(const aap_protobuf::service::control::message::ChannelOpenRequest &request) override;
 
+            void onPhoneStatusEvent(const aap_protobuf::service::phonestatus::message::PhoneStatus &status) override;
+
             void onChannelError(const aasdk::error::Error &e) override;
 
 
