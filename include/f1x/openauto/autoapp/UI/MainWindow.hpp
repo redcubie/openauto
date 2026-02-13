@@ -129,42 +129,15 @@ private slots:
     void customButtonPressed4();
     void customButtonPressed5();
     void customButtonPressed6();
-    void playerShow();
-    void playerHide();
     void updateBG();
 
-    void on_horizontalSliderProgressPlayer_sliderMoved(int position);
-    void on_horizontalSliderVolumePlayer_sliderMoved(int position);
-    void on_pushButtonList_clicked();
-    void on_pushButtonPlayerStop_clicked();
-    void on_pushButtonPlayerPause_clicked();
-    void on_positionChanged(qint64 position);
-    void on_durationChanged(qint64 position);
-    void on_mp3List_itemClicked(QListWidgetItem *item);
-    void metaDataChanged();
-    void on_pushButtonPlayerPlayList_clicked();
-    void on_pushButtonPlayerNextBig_clicked();
-    void on_pushButtonPlayerPrevBig_clicked();
-    void on_pushButtonPlayerPrevAlbum_clicked();
-    void on_pushButtonPlayerNextAlbum_clicked();
-    void on_pushButtonBackToPlayer_clicked();
-    void on_comboBoxAlbum_currentIndexChanged(const QString &arg1);
-    void on_mp3List_currentRowChanged(int currentRow);
-    void on_StateChanged(QMediaPlayer::State state);
-    void scanFolders();
-    void scanFiles();
+
     void tmpChanged();
-    void setTrigger();
     void setRetryUSBConnect();
     void resetRetryUSBMessage();
     void updateNetworkInfo();
     bool check_file_exist(const char *filename);
     void hostModeStateChanged(QBluetoothLocalDevice::HostMode);
-
-    //void on_AlbumCoverListView_clicked(const QModelIndex &index);
-    void on_AlbumCoverListView_clicked(const QModelIndex &index);
-
-    void on_pushButtonAlbum_clicked();
 
 private:
     Ui::MainWindow* ui_;
