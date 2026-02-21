@@ -175,10 +175,19 @@ namespace f1x {
 
           aap_protobuf::service::control::message::ServiceDiscoveryResponse serviceDiscoveryResponse;
           serviceDiscoveryResponse.mutable_channels()->Reserve(256);
-          serviceDiscoveryResponse.set_driver_position(aap_protobuf::service::control::message::DriverPosition::DRIVER_POSITION_RIGHT);
-          // serviceDiscoveryResponse.set_can_play_native_media_during_vr(false); // Deprecated function removed
-          serviceDiscoveryResponse.set_display_name("Crankshaft-NG");
+          serviceDiscoveryResponse.set_driver_position(configuration_->getDriverPosition());
+          serviceDiscoveryResponse.set_display_name(configuration_->getDisplayName());
           serviceDiscoveryResponse.set_probe_for_support(false);
+
+          auto *headUnitInfo = serviceDiscoveryResponse.mutable_headunit_info();
+          headUnitInfo->set_make(configuration_->getVehicleMake());
+          headUnitInfo->set_model(configuration_->getVehicleModel());
+          headUnitInfo->set_year(configuration_->getVehicleYear());
+          headUnitInfo->set_vehicle_id(configuration_->getVehicleID());
+          headUnitInfo->set_head_unit_make(configuration_->getHeadUnitMake());
+          headUnitInfo->set_head_unit_model(configuration_->getHeadUnitModel());
+          headUnitInfo->set_head_unit_software_build(configuration_->getHeadUnitSoftwareVersion());
+          headUnitInfo->set_head_unit_software_version(configuration_->getHeadUnitSoftwareBuild());
 
           auto *connectionConfiguration = serviceDiscoveryResponse.mutable_connection_configuration();
 
@@ -187,19 +196,6 @@ namespace f1x {
           pingConfiguration->set_timeout_ms(3000);
           pingConfiguration->set_interval_ms(1000);
           pingConfiguration->set_high_latency_threshold_ms(200);
-
-
-          auto *headUnitInfo = serviceDiscoveryResponse.mutable_headunit_info();
-
-          serviceDiscoveryResponse.set_display_name("Crankshaft-NG");
-          headUnitInfo->set_make("Crankshaft");
-          headUnitInfo->set_model("Universal");
-          headUnitInfo->set_year("2018");
-          headUnitInfo->set_vehicle_id("2024110822150988");
-          headUnitInfo->set_head_unit_make("f1x");
-          headUnitInfo->set_head_unit_model("Crankshaft-NG Autoapp");
-          headUnitInfo->set_head_unit_software_build("1");
-          headUnitInfo->set_head_unit_software_version("1.0");
 
           std::for_each(serviceList_.begin(), serviceList_.end(),
                         std::bind(&IService::fillFeatures, std::placeholders::_1, std::ref(serviceDiscoveryResponse)));

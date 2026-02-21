@@ -259,9 +259,15 @@ comboBoxBluetooth->addItem(QCoreApplication::translate("SettingsWindow", "none",
   }
 
   void SettingsWindow::onSave() {
-    configuration_->setHandednessOfTrafficType(
-        ui_->radioButtonLeftHandDrive->isChecked() ? configuration::HandednessOfTrafficType::LEFT_HAND_DRIVE
-                                                   : configuration::HandednessOfTrafficType::RIGHT_HAND_DRIVE);
+    if (ui_->radioButtonDriverPositionLeft->isChecked()) {
+      configuration_->setDriverPosition(aap_protobuf::service::control::message::DriverPosition::DRIVER_POSITION_LEFT);
+    } else if (ui_->radioButtonDriverPositionCenter->isChecked()) {
+      configuration_->setDriverPosition(aap_protobuf::service::control::message::DriverPosition::DRIVER_POSITION_CENTER);
+    } else if (ui_->radioButtonDriverPositionRight->isChecked()) {
+      configuration_->setDriverPosition(aap_protobuf::service::control::message::DriverPosition::DRIVER_POSITION_RIGHT);
+    } else if (ui_->radioButtonDriverPositionUnknown->isChecked()) {
+      configuration_->setDriverPosition(aap_protobuf::service::control::message::DriverPosition::DRIVER_POSITION_UNKNOWN);
+    }
 
     configuration_->showClock(ui_->checkBoxShowClock->isChecked());
     configuration_->showBigClock(ui_->checkBoxShowBigClock->isChecked());
@@ -272,6 +278,16 @@ comboBoxBluetooth->addItem(QCoreApplication::translate("SettingsWindow", "none",
     configuration_->hideBrightnessControl(ui_->checkBoxHideBrightnessControl->isChecked());
     configuration_->showNetworkinfo(ui_->checkBoxNetworkinfo->isChecked());
     configuration_->hideWarning(ui_->checkBoxDontShowAgain->isChecked());
+
+    configuration_->setDisplayName(ui_->lineEditDisplayName->text().toStdString());
+    configuration_->setVehicleMake(ui_->lineEditVehicleMake->text().toStdString());
+    configuration_->setVehicleModel(ui_->lineEditVehicleModel->text().toStdString());
+    configuration_->setVehicleYear(ui_->lineEditVehicleYear->text().toStdString());
+    configuration_->setVehicleID(ui_->lineEditVehicleID->text().toStdString());
+    configuration_->setHeadUnitMake(ui_->lineEditHeadUnitMake->text().toStdString());
+    configuration_->setHeadUnitModel(ui_->lineEditHeadUnitModel->text().toStdString());
+    configuration_->setHeadUnitSoftwareVersion(ui_->lineEditHeadUnitSoftwareVersion->text().toStdString());
+    configuration_->setHeadUnitSoftwareBuild(ui_->lineEditHeadUnitSoftwareBuild->text().toStdString());
 
     configuration_->setVideoFPS(ui_->radioButton30FPS->isChecked()
                                 ? aap_protobuf::service::media::sink::message::VideoFrameRateType::VIDEO_FPS_30
@@ -341,10 +357,15 @@ comboBoxBluetooth->addItem(QCoreApplication::translate("SettingsWindow", "none",
   }
 
   void SettingsWindow::load() {
-    ui_->radioButtonLeftHandDrive->setChecked(
-        configuration_->getHandednessOfTrafficType() == configuration::HandednessOfTrafficType::LEFT_HAND_DRIVE);
-    ui_->radioButtonRightHandDrive->setChecked(
-        configuration_->getHandednessOfTrafficType() == configuration::HandednessOfTrafficType::RIGHT_HAND_DRIVE);
+    ui_->radioButtonDriverPositionLeft->setChecked(
+        configuration_->getDriverPosition() == aap_protobuf::service::control::message::DriverPosition::DRIVER_POSITION_LEFT);
+    ui_->radioButtonDriverPositionCenter->setChecked(
+        configuration_->getDriverPosition() == aap_protobuf::service::control::message::DriverPosition::DRIVER_POSITION_CENTER);
+    ui_->radioButtonDriverPositionRight->setChecked(
+        configuration_->getDriverPosition() == aap_protobuf::service::control::message::DriverPosition::DRIVER_POSITION_RIGHT);
+    ui_->radioButtonDriverPositionUnknown->setChecked(
+        configuration_->getDriverPosition() == aap_protobuf::service::control::message::DriverPosition::DRIVER_POSITION_UNKNOWN);
+    
     ui_->checkBoxShowClock->setChecked(configuration_->showClock());
     ui_->horizontalSliderAlphaTrans->setValue(static_cast<int>(configuration_->getAlphaTrans()));
 
@@ -355,6 +376,16 @@ comboBoxBluetooth->addItem(QCoreApplication::translate("SettingsWindow", "none",
     ui_->checkBoxHideBrightnessControl->setChecked(configuration_->hideBrightnessControl());
     ui_->checkBoxNetworkinfo->setChecked(configuration_->showNetworkinfo());
     ui_->checkBoxDontShowAgain->setChecked(configuration_->hideWarning());
+
+    ui_->lineEditDisplayName->setText(QString::fromStdString(configuration_->getDisplayName()));
+    ui_->lineEditVehicleMake->setText(QString::fromStdString(configuration_->getVehicleMake()));
+    ui_->lineEditVehicleModel->setText(QString::fromStdString(configuration_->getVehicleModel()));
+    ui_->lineEditVehicleYear->setText(QString::fromStdString(configuration_->getVehicleYear()));
+    ui_->lineEditVehicleID->setText(QString::fromStdString(configuration_->getVehicleID()));
+    ui_->lineEditHeadUnitMake->setText(QString::fromStdString(configuration_->getHeadUnitMake()));
+    ui_->lineEditHeadUnitModel->setText(QString::fromStdString(configuration_->getHeadUnitModel()));
+    ui_->lineEditHeadUnitSoftwareVersion->setText(QString::fromStdString(configuration_->getHeadUnitSoftwareVersion()));
+    ui_->lineEditHeadUnitSoftwareBuild->setText(QString::fromStdString(configuration_->getHeadUnitSoftwareBuild()));
 
     ui_->radioButton30FPS->setChecked(configuration_->getVideoFPS() ==
                                       aap_protobuf::service::media::sink::message::VideoFrameRateType::VIDEO_FPS_30);

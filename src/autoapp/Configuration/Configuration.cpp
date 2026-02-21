@@ -41,7 +41,16 @@ const std::string Configuration::cGeneralHideBrightnessControlKey = "General.Hid
 const std::string Configuration::cGeneralShowNetworkinfoKey = "General.ShowNetworkinfo";
 const std::string Configuration::cGeneralHideWarningKey = "General.HideWarning";
 
-const std::string Configuration::cGeneralHandednessOfTrafficTypeKey = "General.HandednessOfTrafficType";
+const std::string Configuration::cGeneralDriverPositionKey = "General.DriverPosition";
+const std::string Configuration::cMetadataDisplayNameKey = "Metadata.DisplayName";
+const std::string Configuration::cMetadataVehicleMakeKey = "Metadata.VehicleMake";
+const std::string Configuration::cMetadataVehicleModelKey = "Metadata.VehicleModel";
+const std::string Configuration::cMetadataVehicleYearKey = "Metadata.VehicleYear";
+const std::string Configuration::cMetadataVehicleIDKey = "Metadata.VehicleID";
+const std::string Configuration::cMetadataHeadUnitMakeKey = "Metadata.HeadUnitMake";
+const std::string Configuration::cMetadataHeadUnitModelKey = "Metadata.HeadUnitModel";
+const std::string Configuration::cMetadataHeadUnitSoftwareVersionKey = "Metadata.HeadUnitSoftwareVersion";
+const std::string Configuration::cMetadataHeadUnitSoftwareBuildKey = "Metadata.HeadUnitSoftwareBuild";
 
 const std::string Configuration::cVideoFPSKey = "Video.FPS";
 const std::string Configuration::cVideoResolutionKey = "Video.Resolution";
@@ -94,8 +103,9 @@ void Configuration::load()
     {
         boost::property_tree::ini_parser::read_ini(cConfigFileName, iniConfig);
 
-        handednessOfTrafficType_ = static_cast<HandednessOfTrafficType>(iniConfig.get<uint32_t>(cGeneralHandednessOfTrafficTypeKey,
-                                                                                              static_cast<uint32_t>(HandednessOfTrafficType::LEFT_HAND_DRIVE)));
+        driverPosition_ = static_cast<aap_protobuf::service::control::message::DriverPosition>(iniConfig.get<uint32_t>(
+            cGeneralDriverPositionKey, aap_protobuf::service::control::message::DriverPosition::DRIVER_POSITION_LEFT));
+
         showClock_ = iniConfig.get<bool>(cGeneralShowClockKey, true);
         showBigClock_ = iniConfig.get<bool>(cGeneralShowBigClockKey, false);
         oldGUI_ = iniConfig.get<bool>(cGeneralOldGUIKey, false);
@@ -107,6 +117,15 @@ void Configuration::load()
         hideBrightnessControl_ = iniConfig.get<bool>(cGeneralHideBrightnessControlKey, false);
         hideWarning_ = iniConfig.get<bool>(cGeneralHideWarningKey, false);
         showNetworkinfo_ = iniConfig.get<bool>(cGeneralShowNetworkinfoKey, false);
+        displayName_ = iniConfig.get<std::string>(cMetadataDisplayNameKey, "Openauto");
+        vehicleMake_ = iniConfig.get<std::string>(cMetadataVehicleMakeKey, "Openauto");
+        vehicleModel_ = iniConfig.get<std::string>(cMetadataVehicleModelKey, "Openauto");
+        vehicleYear_ = iniConfig.get<std::string>(cMetadataVehicleYearKey, "2026");
+        vehicleID_ = iniConfig.get<std::string>(cMetadataVehicleIDKey, "");
+        headUnitMake_ = iniConfig.get<std::string>(cMetadataHeadUnitMakeKey, "f1x");
+        headUnitModel_ = iniConfig.get<std::string>(cMetadataHeadUnitModelKey, "Crankshaft-NG Autoapp");
+        headUnitSoftwareVersion_ = iniConfig.get<std::string>(cMetadataHeadUnitSoftwareVersionKey, "1.0");
+        headUnitSoftwareBuild_ = iniConfig.get<std::string>(cMetadataHeadUnitSoftwareBuildKey, "1");
 
         videoFPS_ = static_cast<aap_protobuf::service::media::sink::message::VideoFrameRateType>(iniConfig.get<uint32_t>(cVideoFPSKey,
                                                                                              aap_protobuf::service::media::sink::message::VideoFrameRateType::VIDEO_FPS_30));
@@ -147,7 +166,7 @@ void Configuration::load()
 
 void Configuration::reset()
 {
-    handednessOfTrafficType_ = HandednessOfTrafficType::LEFT_HAND_DRIVE;
+    driverPosition_ = aap_protobuf::service::control::message::DriverPosition::DRIVER_POSITION_LEFT;
     showClock_ = true;
     showBigClock_ = false;
     oldGUI_ = false;
@@ -158,6 +177,15 @@ void Configuration::reset()
     showCursor_ = false;
     hideBrightnessControl_ = false;
     hideWarning_ = false;
+    displayName_ = "Openauto";
+    vehicleMake_ = "Openauto";
+    vehicleModel_ = "Openauto";
+    vehicleYear_ = "2026";
+    vehicleID_ = "";
+    headUnitMake_ = "f1x";
+    headUnitModel_ = "Crankshaft-NG Autoapp";
+    headUnitSoftwareVersion_ = "1.0";
+    headUnitSoftwareBuild_ = "1";
     showNetworkinfo_ = false;
     videoFPS_ = aap_protobuf::service::media::sink::message::VideoFrameRateType::VIDEO_FPS_30;
     videoResolution_ = aap_protobuf::service::media::sink::message::VideoCodecResolutionType::VIDEO_800x480;
@@ -182,7 +210,7 @@ void Configuration::reset()
 void Configuration::save()
 {
     boost::property_tree::ptree iniConfig;
-    iniConfig.put<uint32_t>(cGeneralHandednessOfTrafficTypeKey, static_cast<uint32_t>(handednessOfTrafficType_));
+    iniConfig.put<uint32_t>(cGeneralDriverPositionKey, static_cast<uint32_t>(driverPosition_));
 
     iniConfig.put<bool>(cGeneralShowClockKey, showClock_);
     iniConfig.put<bool>(cGeneralShowBigClockKey, showBigClock_);
@@ -195,6 +223,16 @@ void Configuration::save()
     iniConfig.put<bool>(cGeneralHideBrightnessControlKey, hideBrightnessControl_);
     iniConfig.put<bool>(cGeneralHideWarningKey, hideWarning_);
     iniConfig.put<bool>(cGeneralShowNetworkinfoKey, showNetworkinfo_);
+    iniConfig.put<std::string>(cMetadataDisplayNameKey, displayName_);
+    iniConfig.put<std::string>(cMetadataVehicleMakeKey, vehicleMake_);
+    iniConfig.put<std::string>(cMetadataVehicleModelKey, vehicleModel_);
+    iniConfig.put<std::string>(cMetadataVehicleYearKey, vehicleYear_);
+    iniConfig.put<std::string>(cMetadataVehicleIDKey, vehicleID_);
+    iniConfig.put<std::string>(cMetadataHeadUnitMakeKey, headUnitMake_);
+    iniConfig.put<std::string>(cMetadataHeadUnitModelKey, headUnitModel_);
+    iniConfig.put<std::string>(cMetadataHeadUnitSoftwareVersionKey, headUnitSoftwareVersion_);
+    iniConfig.put<std::string>(cMetadataHeadUnitSoftwareBuildKey, headUnitSoftwareBuild_);
+
 
     iniConfig.put<uint32_t>(cVideoFPSKey, static_cast<uint32_t>(videoFPS_));
     iniConfig.put<uint32_t>(cVideoResolutionKey, static_cast<uint32_t>(videoResolution_));
@@ -239,14 +277,14 @@ bool Configuration::hasTouchScreen() const
     return false;
 }
 
-void Configuration::setHandednessOfTrafficType(HandednessOfTrafficType value)
+void Configuration::setDriverPosition(aap_protobuf::service::control::message::DriverPosition value)
 {
-    handednessOfTrafficType_ = value;
+    driverPosition_ = value;
 }
 
-HandednessOfTrafficType Configuration::getHandednessOfTrafficType() const
+aap_protobuf::service::control::message::DriverPosition Configuration::getDriverPosition() const
 {
-    return handednessOfTrafficType_;
+    return driverPosition_;
 }
 
 void Configuration::showClock(bool value)
@@ -357,6 +395,95 @@ void Configuration::showNetworkinfo(bool value)
 bool Configuration::showNetworkinfo() const
 {
     return showNetworkinfo_;
+}
+
+std::string Configuration::getDisplayName() const
+{
+    return displayName_;
+}
+
+void Configuration::setDisplayName(const std::string &value)
+{
+    displayName_ = value;
+}
+
+std::string Configuration::getVehicleMake() const
+{
+    return vehicleMake_;
+}
+
+void Configuration::setVehicleMake(const std::string &value)
+{
+    vehicleMake_ = value;
+}
+
+std::string Configuration::getVehicleModel() const
+{
+    return vehicleModel_;
+}
+
+void Configuration::setVehicleModel(const std::string &value)
+{
+    vehicleModel_ = value;
+}
+
+std::string Configuration::getVehicleYear() const
+{
+    return vehicleYear_;
+}
+
+void Configuration::setVehicleYear(const std::string &value)
+{
+    vehicleYear_ = value;
+}
+
+std::string Configuration::getVehicleID() const
+{
+    return vehicleID_;
+}
+
+void Configuration::setVehicleID(const std::string &value)
+{
+    vehicleID_ = value;
+}
+
+std::string Configuration::getHeadUnitMake() const
+{
+    return headUnitMake_;
+}
+void Configuration::setHeadUnitMake(const std::string &value)
+{
+    headUnitMake_ = value;
+}
+
+std::string Configuration::getHeadUnitModel() const
+{
+    return headUnitModel_;
+}
+
+void Configuration::setHeadUnitModel(const std::string &value)
+{
+    headUnitModel_ = value;
+}
+
+std::string Configuration::getHeadUnitSoftwareVersion() const
+{
+    return headUnitSoftwareVersion_;
+}
+
+void Configuration::setHeadUnitSoftwareVersion(const std::string &value)
+{
+    headUnitSoftwareVersion_ = value;
+}
+
+std::string Configuration::getHeadUnitSoftwareBuild() const
+{
+    return headUnitSoftwareBuild_;
+}
+
+void Configuration::setHeadUnitSoftwareBuild(const std::string &value)
+{
+    headUnitSoftwareBuild_ = value;
 }
 
 aap_protobuf::service::media::sink::message::VideoFrameRateType Configuration::getVideoFPS() const
