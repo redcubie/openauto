@@ -37,6 +37,9 @@
 #include <f1x/openauto/autoapp/Service/Sensor/SensorService.hpp>
 #include <f1x/openauto/autoapp/Service/Bluetooth/BluetoothService.hpp>
 #include <f1x/openauto/autoapp/Service/InputSource/InputSourceService.hpp>
+#include <f1x/openauto/autoapp/Service/NavigationStatus/NavigationStatusService.hpp>
+#include <f1x/openauto/autoapp/Service/PhoneStatus/PhoneStatusService.hpp>
+#include <f1x/openauto/autoapp/Service/MediaPlaybackStatus/MediaPlaybackStatusService.hpp>
 #include <f1x/openauto/autoapp/Service/WifiProjection/WifiProjectionService.hpp>
 #include <f1x/openauto/autoapp/Projection/QtVideoOutput.hpp>
 #include <f1x/openauto/autoapp/Projection/OMXVideoOutput.hpp>
@@ -73,6 +76,10 @@ namespace f1x::openauto::autoapp::service {
         serviceList.emplace_back(this->createBluetoothService(messenger));
         // serviceList.emplace_back(this->createWifiProjectionService(messenger));
     }
+
+    serviceList.emplace_back(this->createNavigationStatusService(messenger));
+    serviceList.emplace_back(this->createPhoneStatusService(messenger));
+    serviceList.emplace_back(this->createMediaPlaybackStatusService(messenger));
 
     return serviceList;
   }
@@ -118,6 +125,11 @@ namespace f1x::openauto::autoapp::service {
                                                   std::move(screenGeometry), std::move(videoGeometry)));
 
     return std::make_shared<inputsource::InputSourceService>(ioService_, messenger, std::move(inputDevice));
+  }
+
+  IService::Pointer ServiceFactory::createMediaPlaybackStatusService(aasdk::messenger::IMessenger::Pointer messenger) {
+    OPENAUTO_LOG(info) << "[ServiceFactory] createMediaPlaybackStatusService()";
+    return std::make_shared<mediaplaybackstatus::MediaPlaybackStatusService>(ioService_, messenger);
   }
 
   void ServiceFactory::createMediaSinkServices(ServiceList &serviceList,
@@ -195,6 +207,16 @@ namespace f1x::openauto::autoapp::service {
                                                 std::bind(&QObject::deleteLater, std::placeholders::_1));
     serviceList.emplace_back(std::make_shared<mediasource::MicrophoneMediaSourceService>(ioService_, messenger,
                                                                                          std::move(audioInput)));
+  }
+
+  IService::Pointer ServiceFactory::createNavigationStatusService(aasdk::messenger::IMessenger::Pointer messenger) {
+    OPENAUTO_LOG(info) << "[ServiceFactory] createNavigationStatusService()";
+    return std::make_shared<navigationstatus::NavigationStatusService>(ioService_, messenger);
+  }
+
+  IService::Pointer ServiceFactory::createPhoneStatusService(aasdk::messenger::IMessenger::Pointer messenger) {
+    OPENAUTO_LOG(info) << "[ServiceFactory] createPhoneStatusService()";
+    return std::make_shared<phonestatus::PhoneStatusService>(ioService_, messenger);
   }
 
   IService::Pointer ServiceFactory::createSensorService(aasdk::messenger::IMessenger::Pointer messenger) {
