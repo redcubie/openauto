@@ -22,6 +22,7 @@
 #include <f1x/openauto/autoapp/Service/IService.hpp>
 #include <boost/asio/io_service.hpp>
 #include <aasdk/Messenger/IMessenger.hpp>
+#include <f1x/openauto/autoapp/State/AppState.hpp>
 
 namespace f1x {
   namespace openauto {
@@ -34,7 +35,8 @@ namespace f1x {
               public IService,
               public std::enable_shared_from_this<MediaPlaybackStatusService> {
           public:
-            MediaPlaybackStatusService(boost::asio::io_service &ioService, aasdk::messenger::IMessenger::Pointer messenger);
+            MediaPlaybackStatusService(boost::asio::io_service &ioService, aasdk::messenger::IMessenger::Pointer messenger,
+                                       state::AppState::Pointer appstate);
 
             void start() override;
             void stop() override;
@@ -55,6 +57,8 @@ namespace f1x {
             boost::asio::io_service::strand strand_;
             boost::asio::deadline_timer timer_;
             aasdk::channel::mediaplaybackstatus::MediaPlaybackStatusService::Pointer channel_;
+            state::AppState::Pointer appstate_;
+            std::vector<boost::signals2::connection> signalconns_;
           };
 
         }

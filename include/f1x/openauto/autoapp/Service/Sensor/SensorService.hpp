@@ -25,6 +25,7 @@
 #include <f1x/openauto/autoapp/Service/IService.hpp>
 #include <boost/asio/io_service.hpp>
 #include <aasdk/Messenger/IMessenger.hpp>
+#include <f1x/openauto/autoapp/State/AppState.hpp>
 
 
 namespace f1x::openauto::autoapp::service::sensor {
@@ -33,8 +34,8 @@ namespace f1x::openauto::autoapp::service::sensor {
       public IService,
       public std::enable_shared_from_this<SensorService> {
   public:
-    SensorService(boost::asio::io_service &ioService,
-                  aasdk::messenger::IMessenger::Pointer messenger);
+    SensorService(boost::asio::io_service &ioService, aasdk::messenger::IMessenger::Pointer messenger,
+                  state::AppState::Pointer appstate);
 
     bool isNight = false;
     bool previous = false;
@@ -75,6 +76,8 @@ namespace f1x::openauto::autoapp::service::sensor {
     boost::asio::io_service::strand strand_;
     boost::asio::deadline_timer timer_;
     aasdk::channel::sensorsource::SensorSourceService::Pointer channel_;
+    state::AppState::Pointer appstate_;
+    std::vector<boost::signals2::connection> signalconns_;
     struct gps_data_t gpsData_;
     bool gpsEnabled_ = false;
   };

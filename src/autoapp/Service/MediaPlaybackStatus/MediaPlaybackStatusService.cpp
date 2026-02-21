@@ -28,12 +28,12 @@ namespace f1x {
         namespace mediaplaybackstatus {
 
           MediaPlaybackStatusService::MediaPlaybackStatusService(boost::asio::io_service &ioService,
-                                                       aasdk::messenger::IMessenger::Pointer messenger)
-              : strand_(ioService),
-                timer_(ioService),
-                channel_(std::make_shared<aasdk::channel::mediaplaybackstatus::MediaPlaybackStatusService>(strand_, std::move(messenger))) {
-
-          }
+                                                                 aasdk::messenger::IMessenger::Pointer messenger,
+                                                                 state::AppState::Pointer appstate)
+            : strand_(ioService), timer_(ioService),
+              channel_(std::make_shared<aasdk::channel::mediaplaybackstatus::MediaPlaybackStatusService>(strand_,
+                                                                                                         std::move(messenger))),
+              appstate_(std::move(appstate)), signalconns_(std::vector<boost::signals2::connection>()) {}
 
           void MediaPlaybackStatusService::start() {
             strand_.dispatch([this, self = this->shared_from_this()]() {
@@ -45,6 +45,10 @@ namespace f1x {
           void MediaPlaybackStatusService::stop() {
             strand_.dispatch([this, self = this->shared_from_this()]() {
               OPENAUTO_LOG(info) << "[MediaPlaybackStatusService] stop()";
+
+              for (auto &conn : signalconns_) {
+                conn.disconnect();
+              }
             });
           }
 

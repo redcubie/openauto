@@ -31,12 +31,13 @@ namespace f1x {
                                              aasdk::messenger::IMessenger::Pointer messenger,
                                              configuration::IConfiguration::Pointer configuration,
                                              ServiceList serviceList,
-                                             IPinger::Pointer pinger)
+                                             IPinger::Pointer pinger,
+                                             state::AppState::Pointer appstate)
             : strand_(ioService), cryptor_(std::move(cryptor)), transport_(std::move(transport)),
               messenger_(std::move(messenger)), controlServiceChannel_(
                 std::make_shared<aasdk::channel::control::ControlServiceChannel>(strand_, messenger_)),
               configuration_(std::move(configuration)), serviceList_(std::move(serviceList)),
-              pinger_(std::move(pinger)), eventHandler_(nullptr) {
+              pinger_(std::move(pinger)), eventHandler_(nullptr), appstate_(std::move(appstate)), signalconns_(std::vector<boost::signals2::connection>()) {
         }
 
         AndroidAutoEntity::~AndroidAutoEntity() {
@@ -72,6 +73,10 @@ namespace f1x {
               messenger_->stop();
               transport_->stop();
               cryptor_->deinit();
+
+              for (auto &conn : signalconns_) {
+                conn.disconnect();
+              }
             } catch (...) {
               OPENAUTO_LOG(error) << "[AndroidAutoEntity] stop() - exception when stopping.";
             }

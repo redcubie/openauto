@@ -52,11 +52,9 @@
 
 namespace f1x::openauto::autoapp::service {
 
-  ServiceFactory::ServiceFactory(boost::asio::io_service &ioService,
-                                 configuration::IConfiguration::Pointer configuration)
-      : ioService_(ioService), configuration_(std::move(configuration)) {
-
-  }
+  ServiceFactory::ServiceFactory(boost::asio::io_service &ioService, configuration::IConfiguration::Pointer configuration,
+                                 state::AppState::Pointer appstate)
+    : ioService_(ioService), configuration_(std::move(configuration)), appstate_(std::move(appstate)) {}
 
   ServiceList ServiceFactory::create(aasdk::messenger::IMessenger::Pointer messenger) {
     OPENAUTO_LOG(info) << "[ServiceFactory] create()";
@@ -124,12 +122,12 @@ namespace f1x::openauto::autoapp::service {
         std::make_shared<projection::InputDevice>(*QApplication::instance(), configuration_,
                                                   std::move(screenGeometry), std::move(videoGeometry)));
 
-    return std::make_shared<inputsource::InputSourceService>(ioService_, messenger, std::move(inputDevice));
+    return std::make_shared<inputsource::InputSourceService>(ioService_, messenger, std::move(inputDevice), appstate_);
   }
 
   IService::Pointer ServiceFactory::createMediaPlaybackStatusService(aasdk::messenger::IMessenger::Pointer messenger) {
     OPENAUTO_LOG(info) << "[ServiceFactory] createMediaPlaybackStatusService()";
-    return std::make_shared<mediaplaybackstatus::MediaPlaybackStatusService>(ioService_, messenger);
+    return std::make_shared<mediaplaybackstatus::MediaPlaybackStatusService>(ioService_, messenger, appstate_);
   }
 
   void ServiceFactory::createMediaSinkServices(ServiceList &serviceList,
@@ -196,8 +194,7 @@ namespace f1x::openauto::autoapp::service {
 #endif
 
     OPENAUTO_LOG(info) << "[ServiceFactory] Video Channel enabled";
-    serviceList.emplace_back(
-        std::make_shared<mediasink::VideoService>(ioService_, messenger, std::move(videoOutput)));
+    serviceList.emplace_back(std::make_shared<mediasink::VideoService>(ioService_, messenger, std::move(videoOutput), appstate_));
   }
 
   void ServiceFactory::createMediaSourceServices(f1x::openauto::autoapp::service::ServiceList &serviceList,
@@ -211,17 +208,17 @@ namespace f1x::openauto::autoapp::service {
 
   IService::Pointer ServiceFactory::createNavigationStatusService(aasdk::messenger::IMessenger::Pointer messenger) {
     OPENAUTO_LOG(info) << "[ServiceFactory] createNavigationStatusService()";
-    return std::make_shared<navigationstatus::NavigationStatusService>(ioService_, messenger);
+    return std::make_shared<navigationstatus::NavigationStatusService>(ioService_, messenger, appstate_);
   }
 
   IService::Pointer ServiceFactory::createPhoneStatusService(aasdk::messenger::IMessenger::Pointer messenger) {
     OPENAUTO_LOG(info) << "[ServiceFactory] createPhoneStatusService()";
-    return std::make_shared<phonestatus::PhoneStatusService>(ioService_, messenger);
+    return std::make_shared<phonestatus::PhoneStatusService>(ioService_, messenger, appstate_);
   }
 
   IService::Pointer ServiceFactory::createSensorService(aasdk::messenger::IMessenger::Pointer messenger) {
     OPENAUTO_LOG(info) << "[ServiceFactory] createSensorService()";
-    return std::make_shared<sensor::SensorService>(ioService_, messenger);
+    return std::make_shared<sensor::SensorService>(ioService_, messenger, appstate_);
   }
 
   IService::Pointer ServiceFactory::createWifiProjectionService(aasdk::messenger::IMessenger::Pointer messenger) {

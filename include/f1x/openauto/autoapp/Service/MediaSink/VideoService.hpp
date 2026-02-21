@@ -29,9 +29,8 @@ namespace f1x {
         namespace mediasink {
           class VideoService : public VideoMediaSinkService {
           public:
-            VideoService(boost::asio::io_service &ioService,
-                               aasdk::messenger::IMessenger::Pointer messenger,
-                               projection::IVideoOutput::Pointer videoOutput);
+            VideoService(boost::asio::io_service &ioService, aasdk::messenger::IMessenger::Pointer messenger,
+                         projection::IVideoOutput::Pointer videoOutput, state::AppState::Pointer appstate);
 
           protected:
             projection::IVideoOutput::Pointer videoOutput;

@@ -23,6 +23,7 @@
 #include <aasdk/Channel/MediaSink/Video/IVideoMediaSinkServiceEventHandler.hpp>
 #include <f1x/openauto/autoapp/Projection/IVideoOutput.hpp>
 #include <f1x/openauto/autoapp/Service/IService.hpp>
+#include <f1x/openauto/autoapp/State/AppState.hpp>
 
 namespace f1x {
   namespace openauto {
@@ -40,7 +41,7 @@ namespace f1x {
             // General Constructor
             VideoMediaSinkService(boost::asio::io_service& ioService,
                                   aasdk::channel::mediasink::video::IVideoMediaSinkService::Pointer channel,
-                                  projection::IVideoOutput::Pointer videoOutput);
+                                  projection::IVideoOutput::Pointer videoOutput, state::AppState::Pointer appstate);
 
             void start() override;
             void stop() override;
@@ -74,6 +75,8 @@ namespace f1x {
             aasdk::channel::mediasink::video::IVideoMediaSinkService::Pointer channel_;
             projection::IVideoOutput::Pointer videoOutput_;
             int32_t session_;
+            state::AppState::Pointer appstate_;
+            std::vector<boost::signals2::connection> signalconns_;
           };
         }
       }

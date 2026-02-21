@@ -26,12 +26,11 @@ namespace f1x {
         namespace inputsource {
           InputSourceService::InputSourceService(boost::asio::io_service &ioService,
                                                  aasdk::messenger::IMessenger::Pointer messenger,
-                                                 projection::IInputDevice::Pointer inputDevice)
-              : strand_(ioService),
-                channel_(std::make_shared<aasdk::channel::inputsource::InputSourceService>(strand_, std::move(messenger))),
-                inputDevice_(std::move(inputDevice)) {
-
-          }
+                                                 projection::IInputDevice::Pointer inputDevice, state::AppState::Pointer appstate)
+            : strand_(ioService),
+              channel_(std::make_shared<aasdk::channel::inputsource::InputSourceService>(strand_, std::move(messenger))),
+              inputDevice_(std::move(inputDevice)), appstate_(std::move(appstate)),
+              signalconns_(std::vector<boost::signals2::connection>()) {}
 
           void InputSourceService::start() {
             strand_.dispatch([this, self = this->shared_from_this()]() {
@@ -44,6 +43,10 @@ namespace f1x {
             strand_.dispatch([this, self = this->shared_from_this()]() {
               OPENAUTO_LOG(info) << "[InputSourceService] stop()";
               inputDevice_->stop();
+
+              for (auto &conn : signalconns_) {
+                conn.disconnect();
+              }
             });
           }
 

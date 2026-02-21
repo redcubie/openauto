@@ -25,6 +25,7 @@
 #include <aasdk/TCP/ITCPEndpoint.hpp>
 #include <f1x/openauto/autoapp/Service/IAndroidAutoEntityEventHandler.hpp>
 #include <f1x/openauto/autoapp/Service/IAndroidAutoEntityFactory.hpp>
+#include <f1x/openauto/autoapp/State/AppState.hpp>
 
 namespace f1x
 {
@@ -38,8 +39,9 @@ class App: public service::IAndroidAutoEntityEventHandler, public std::enable_sh
 public:
     typedef std::shared_ptr<App> Pointer;
 
-    App(boost::asio::io_service& ioService, aasdk::usb::USBWrapper& usbWrapper, aasdk::tcp::ITCPWrapper& tcpWrapper, service::IAndroidAutoEntityFactory& androidAutoEntityFactory,
-        aasdk::usb::IUSBHub::Pointer usbHub, aasdk::usb::IConnectedAccessoriesEnumerator::Pointer connectedAccessoriesEnumerator);
+    App(boost::asio::io_service &ioService, aasdk::usb::USBWrapper &usbWrapper, aasdk::tcp::ITCPWrapper &tcpWrapper,
+        service::IAndroidAutoEntityFactory &androidAutoEntityFactory, aasdk::usb::IUSBHub::Pointer usbHub,
+        aasdk::usb::IConnectedAccessoriesEnumerator::Pointer connectedAccessoriesEnumerator, state::AppState::Pointer appstate);
 
     void waitForUSBDevice();
     void start(aasdk::tcp::ITCPEndpoint::SocketPointer socket);
@@ -63,6 +65,8 @@ private:
     service::IAndroidAutoEntityFactory& androidAutoEntityFactory_;
     aasdk::usb::IUSBHub::Pointer usbHub_;
     aasdk::usb::IConnectedAccessoriesEnumerator::Pointer connectedAccessoriesEnumerator_;
+    state::AppState::Pointer appstate_;
+    std::vector<boost::signals2::connection> signalconns_;
     boost::asio::ip::tcp::acceptor acceptor_;
     service::IAndroidAutoEntity::Pointer androidAutoEntity_;
     bool isStopped_;

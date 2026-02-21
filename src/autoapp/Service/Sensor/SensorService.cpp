@@ -24,13 +24,11 @@
 #include <gps.h>
 
 namespace f1x::openauto::autoapp::service::sensor {
-  SensorService::SensorService(boost::asio::io_service &ioService,
-                               aasdk::messenger::IMessenger::Pointer messenger)
-      : strand_(ioService),
-        timer_(ioService),
-        channel_(std::make_shared<aasdk::channel::sensorsource::SensorSourceService>(strand_, std::move(messenger))) {
-
-  }
+  SensorService::SensorService(boost::asio::io_service &ioService, aasdk::messenger::IMessenger::Pointer messenger,
+                               state::AppState::Pointer appstate)
+    : strand_(ioService), timer_(ioService),
+      channel_(std::make_shared<aasdk::channel::sensorsource::SensorSourceService>(strand_, std::move(messenger))),
+      appstate_(std::move(appstate)), signalconns_(std::vector<boost::signals2::connection>()) {}
 
   void SensorService::start() {
     strand_.dispatch([this, self = this->shared_from_this()]() {
@@ -64,6 +62,10 @@ namespace f1x::openauto::autoapp::service::sensor {
       }
 
       OPENAUTO_LOG(info) << "[SensorService] stop()";
+
+      for (auto &conn : signalconns_) {
+        conn.disconnect();
+      }
     });
   }
 

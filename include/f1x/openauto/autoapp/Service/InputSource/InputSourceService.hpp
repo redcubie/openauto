@@ -37,7 +37,7 @@ namespace f1x {
               public std::enable_shared_from_this<InputSourceService> {
           public:
             InputSourceService(boost::asio::io_service &ioService, aasdk::messenger::IMessenger::Pointer messenger,
-                               projection::IInputDevice::Pointer inputDevice);
+                               projection::IInputDevice::Pointer inputDevice, state::AppState::Pointer appstate);
 
             void start() override;
             void stop() override;
@@ -62,6 +62,8 @@ namespace f1x {
             boost::asio::io_service::strand strand_;
             aasdk::channel::inputsource::InputSourceService::Pointer channel_;
             projection::IInputDevice::Pointer inputDevice_;
+            state::AppState::Pointer appstate_;
+            std::vector<boost::signals2::connection> signalconns_;
           };
 
         }

@@ -25,15 +25,13 @@
 namespace f1x::openauto::autoapp {
 
   App::App(boost::asio::io_service &ioService, aasdk::usb::USBWrapper &usbWrapper, aasdk::tcp::ITCPWrapper &tcpWrapper,
-           service::IAndroidAutoEntityFactory &androidAutoEntityFactory,
-           aasdk::usb::IUSBHub::Pointer usbHub,
-           aasdk::usb::IConnectedAccessoriesEnumerator::Pointer connectedAccessoriesEnumerator)
-      : ioService_(ioService), usbWrapper_(usbWrapper), tcpWrapper_(tcpWrapper), strand_(ioService_),
-        androidAutoEntityFactory_(androidAutoEntityFactory), usbHub_(std::move(usbHub)),
-        connectedAccessoriesEnumerator_(std::move(connectedAccessoriesEnumerator)),
-        acceptor_(ioService, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 5000)), isStopped_(false) {
-
-  }
+           service::IAndroidAutoEntityFactory &androidAutoEntityFactory, aasdk::usb::IUSBHub::Pointer usbHub,
+           aasdk::usb::IConnectedAccessoriesEnumerator::Pointer connectedAccessoriesEnumerator, state::AppState::Pointer appstate)
+    : ioService_(ioService), usbWrapper_(usbWrapper), tcpWrapper_(tcpWrapper), strand_(ioService_),
+      androidAutoEntityFactory_(androidAutoEntityFactory), usbHub_(std::move(usbHub)),
+      connectedAccessoriesEnumerator_(std::move(connectedAccessoriesEnumerator)), appstate_(std::move(appstate)),
+      signalconns_(std::vector<boost::signals2::connection>()),
+      acceptor_(ioService, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 5000)), isStopped_(false) {}
 
   void App::waitForUSBDevice() {
     strand_.dispatch([this, self = this->shared_from_this()]() {
@@ -114,6 +112,10 @@ namespace f1x::openauto::autoapp {
         } catch (...) {
           OPENAUTO_LOG(error) << "[App] stop: exception caused by androidAutoEntity_.reset();";
         }
+      }
+
+      for (auto &conn : signalconns_) {
+        conn.disconnect();
       }
     });
 

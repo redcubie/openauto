@@ -24,13 +24,11 @@
 namespace f1x::openauto::autoapp::service::navigationstatus {
 
   NavigationStatusService::NavigationStatusService(boost::asio::io_service &ioService,
-                                                   aasdk::messenger::IMessenger::Pointer messenger)
-      : strand_(ioService),
-        timer_(ioService),
-        channel_(std::make_shared<aasdk::channel::navigationstatus::NavigationStatusService>(strand_,
-                                                                                             std::move(messenger))) {
-
-  }
+                                                   aasdk::messenger::IMessenger::Pointer messenger,
+                                                   state::AppState::Pointer appstate)
+    : strand_(ioService), timer_(ioService),
+      channel_(std::make_shared<aasdk::channel::navigationstatus::NavigationStatusService>(strand_, std::move(messenger))),
+      appstate_(std::move(appstate)), signalconns_(std::vector<boost::signals2::connection>()) {}
 
   void NavigationStatusService::start() {
     strand_.dispatch([this, self = this->shared_from_this()]() {
@@ -42,6 +40,10 @@ namespace f1x::openauto::autoapp::service::navigationstatus {
   void NavigationStatusService::stop() {
     strand_.dispatch([this, self = this->shared_from_this()]() {
       OPENAUTO_LOG(info) << "[NavigationStatusService] stop()";
+
+      for (auto &conn : signalconns_) {
+        conn.disconnect();
+      }
     });
   }
 

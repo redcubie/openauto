@@ -27,10 +27,10 @@
 #include <f1x/openauto/autoapp/Service/IAndroidAutoEntity.hpp>
 #include <f1x/openauto/autoapp/Service/IService.hpp>
 #include <f1x/openauto/autoapp/Service/IPinger.hpp>
-#include <Transport/ITransport.hpp>
 #include <aap_protobuf/service/control/message/AudioFocusRequestType.pb.h>
 #include <aap_protobuf/service/control/message/AudioFocusStateType.pb.h>
 #include <aap_protobuf/service/control/message/NavFocusType.pb.h>
+#include <f1x/openauto/autoapp/State/AppState.hpp>
 
 namespace f1x
 {
@@ -50,7 +50,8 @@ public:
                       aasdk::messenger::IMessenger::Pointer messenger,
                       configuration::IConfiguration::Pointer configuration,
                       ServiceList serviceList,
-                      IPinger::Pointer pinger);
+                      IPinger::Pointer pinger,
+                      state::AppState::Pointer appstate);
     ~AndroidAutoEntity() override;
 
     void start(IAndroidAutoEntityEventHandler& eventHandler) override;
@@ -86,6 +87,8 @@ private:
     ServiceList serviceList_;
     IPinger::Pointer pinger_;
     IAndroidAutoEntityEventHandler* eventHandler_;
+    state::AppState::Pointer appstate_;
+    std::vector<boost::signals2::connection> signalconns_;
 };
 
 }

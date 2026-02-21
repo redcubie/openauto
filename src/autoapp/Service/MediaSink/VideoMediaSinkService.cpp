@@ -26,10 +26,10 @@ namespace f1x {
         namespace mediasink {
           VideoMediaSinkService::VideoMediaSinkService(boost::asio::io_service &ioService,
                                                        aasdk::channel::mediasink::video::IVideoMediaSinkService::Pointer channel,
-                                                       projection::IVideoOutput::Pointer videoOutput)
-              : strand_(ioService), channel_(std::move(channel)), videoOutput_(std::move(videoOutput)), session_(-1) {
-
-          }
+                                                       projection::IVideoOutput::Pointer videoOutput,
+                                                       state::AppState::Pointer appstate)
+            : strand_(ioService), channel_(std::move(channel)), videoOutput_(std::move(videoOutput)), session_(-1),
+              appstate_(std::move(appstate)), signalconns_(std::vector<boost::signals2::connection>()) {}
 
           void VideoMediaSinkService::start() {
             strand_.dispatch([this, self = this->shared_from_this()]() {
@@ -46,6 +46,10 @@ namespace f1x {
               OPENAUTO_LOG(info) << "[VideoMediaSinkService] Channel "
                                  << aasdk::messenger::channelIdToString(channel_->getId());
               videoOutput_->stop();
+
+              for (auto &conn : signalconns_) {
+                conn.disconnect();
+              }
             });
           }
 

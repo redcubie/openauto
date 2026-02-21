@@ -24,15 +24,12 @@ namespace f1x {
     namespace autoapp {
       namespace service {
         namespace mediasink {
-          VideoService::VideoService(boost::asio::io_service &ioService,
-                                               aasdk::messenger::IMessenger::Pointer messenger,
-                                               projection::IVideoOutput::Pointer videoOutput)
-              : VideoMediaSinkService(ioService, std::make_shared<aasdk::channel::mediasink::video::channel::VideoChannel>(strand_,
-                                                                                                                       std::move(
-                                                                                                                           messenger)),
-                                      std::move(videoOutput)) {
-
-          }
+          VideoService::VideoService(boost::asio::io_service &ioService, aasdk::messenger::IMessenger::Pointer messenger,
+                                     projection::IVideoOutput::Pointer videoOutput, state::AppState::Pointer appstate)
+            : VideoMediaSinkService(
+                  ioService,
+                  std::make_shared<aasdk::channel::mediasink::video::channel::VideoChannel>(strand_, std::move(messenger)),
+                  std::move(videoOutput), std::move(appstate)) {}
         }
       }
     }
