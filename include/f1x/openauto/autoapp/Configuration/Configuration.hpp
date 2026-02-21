@@ -46,8 +46,8 @@ public:
 
     bool hasTouchScreen() const override;
 
-    void setHandednessOfTrafficType(HandednessOfTrafficType value) override;
-    HandednessOfTrafficType getHandednessOfTrafficType() const override;
+    void setDriverPosition(aap_protobuf::service::control::message::DriverPosition value) override;
+    aap_protobuf::service::control::message::DriverPosition getDriverPosition() const override;
     void showClock(bool value) override;
     bool showClock() const override;
 
@@ -71,6 +71,26 @@ public:
     bool showNetworkinfo() const override;
     void hideWarning(bool value) override;
     bool hideWarning() const override;
+
+    // const std::string Configuration::cGeneralDriverPositionKey
+    std::string getDisplayName() const override;
+    void setDisplayName(const std::string& value) override;
+    std::string getVehicleMake() const override;
+    void setVehicleMake(const std::string& value) override;
+    std::string getVehicleModel() const override;
+    void setVehicleModel(const std::string& value) override;
+    std::string getVehicleYear() const override;
+    void setVehicleYear(const std::string& value) override;
+    std::string getVehicleID() const override;
+    void setVehicleID(const std::string& value) override;
+    std::string getHeadUnitMake() const override;
+    void setHeadUnitMake(const std::string& value) override;
+    std::string getHeadUnitModel() const override;
+    void setHeadUnitModel(const std::string& value) override;
+    std::string getHeadUnitSoftwareVersion() const override;
+    void setHeadUnitSoftwareVersion(const std::string& value) override;
+    std::string getHeadUnitSoftwareBuild() const override;
+    void setHeadUnitSoftwareBuild(const std::string& value) override;
 
     QString getCSValue(QString searchString) const override;
     QString readFileContent(QString fileName) const override;
@@ -117,7 +137,7 @@ private:
     void insertButtonCode(boost::property_tree::ptree& iniConfig, const std::string& buttonCodeKey, aap_protobuf::service::media::sink::message::KeyCode buttonCode);
     void writeButtonCodes(boost::property_tree::ptree& iniConfig);
 
-    HandednessOfTrafficType handednessOfTrafficType_;
+    aap_protobuf::service::control::message::DriverPosition driverPosition_;
     bool showClock_;
 
     bool showBigClock_;
@@ -130,6 +150,15 @@ private:
     bool hideBrightnessControl_;
     bool showNetworkinfo_;
     bool hideWarning_;
+    std::string displayName_;
+    std::string vehicleMake_;
+    std::string vehicleModel_;
+    std::string vehicleYear_;
+    std::string vehicleID_;
+    std::string headUnitMake_;
+    std::string headUnitModel_;
+    std::string headUnitSoftwareVersion_;
+    std::string headUnitSoftwareBuild_;
 
     aap_protobuf::service::media::sink::message::VideoFrameRateType videoFPS_;
     aap_protobuf::service::media::sink::message::VideoCodecResolutionType videoResolution_;
@@ -165,7 +194,16 @@ private:
     static const std::string cGeneralShowNetworkinfoKey;
     static const std::string cGeneralHideWarningKey;
 
-    static const std::string cGeneralHandednessOfTrafficTypeKey;
+    static const std::string cGeneralDriverPositionKey;
+    static const std::string cMetadataDisplayNameKey;
+    static const std::string cMetadataVehicleMakeKey;
+    static const std::string cMetadataVehicleModelKey;
+    static const std::string cMetadataVehicleYearKey;
+    static const std::string cMetadataVehicleIDKey;
+    static const std::string cMetadataHeadUnitMakeKey;
+    static const std::string cMetadataHeadUnitModelKey;
+    static const std::string cMetadataHeadUnitSoftwareVersionKey;
+    static const std::string cMetadataHeadUnitSoftwareBuildKey;
 
     static const std::string cVideoFPSKey;
     static const std::string cVideoResolutionKey;

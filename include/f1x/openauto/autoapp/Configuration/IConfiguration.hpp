@@ -20,11 +20,11 @@
 
 #include <string>
 #include <QRect>
+#include <aap_protobuf/service/control/message/DriverPosition.pb.h>
 #include <aap_protobuf/service/media/sink/message/VideoFrameRateType.pb.h>
 #include <aap_protobuf/service/media/sink/message/VideoCodecResolutionType.pb.h>
 #include <aap_protobuf/service/media/sink/message/KeyCode.pb.h>
 #include <f1x/openauto/autoapp/Configuration/BluetoothAdapterType.hpp>
-#include <f1x/openauto/autoapp/Configuration/HandednessOfTrafficType.hpp>
 #include <f1x/openauto/autoapp/Configuration/AudioOutputBackendType.hpp>
 
 namespace f1x
@@ -50,8 +50,8 @@ public:
 
     virtual bool hasTouchScreen() const = 0;
 
-    virtual void setHandednessOfTrafficType(HandednessOfTrafficType value) = 0;
-    virtual HandednessOfTrafficType getHandednessOfTrafficType() const = 0;
+    virtual void setDriverPosition(aap_protobuf::service::control::message::DriverPosition value) = 0;
+    virtual aap_protobuf::service::control::message::DriverPosition getDriverPosition() const = 0;
     virtual void showClock(bool value) = 0;
     virtual bool showClock() const = 0;
     virtual void showBigClock(bool value) = 0;
@@ -74,6 +74,24 @@ public:
     virtual bool showNetworkinfo() const = 0;
     virtual void hideWarning(bool value) = 0;
     virtual bool hideWarning() const = 0;
+    virtual std::string getDisplayName() const = 0;
+    virtual void setDisplayName(const std::string& value) = 0;
+    virtual std::string getVehicleMake() const = 0;
+    virtual void setVehicleMake(const std::string& value) = 0;
+    virtual std::string getVehicleModel() const = 0;
+    virtual void setVehicleModel(const std::string& value) = 0;
+    virtual std::string getVehicleYear() const = 0;
+    virtual void setVehicleYear(const std::string& value) = 0;
+    virtual std::string getVehicleID() const = 0;
+    virtual void setVehicleID(const std::string& value) = 0;
+    virtual std::string getHeadUnitMake() const = 0;
+    virtual void setHeadUnitMake(const std::string& value) = 0;
+    virtual std::string getHeadUnitModel() const = 0;
+    virtual void setHeadUnitModel(const std::string& value) = 0;
+    virtual std::string getHeadUnitSoftwareVersion() const = 0;
+    virtual void setHeadUnitSoftwareVersion(const std::string& value) = 0;
+    virtual std::string getHeadUnitSoftwareBuild() const = 0;
+    virtual void setHeadUnitSoftwareBuild(const std::string& value) = 0;
 
     virtual QString getCSValue(QString searchString) const = 0;
     virtual QString readFileContent(QString fileName) const = 0;
