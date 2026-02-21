@@ -57,6 +57,22 @@ void InputDevice::stop()
     eventHandler_ = nullptr;
 }
 
+void InputDevice::pause()
+{
+    std::lock_guard<decltype(mutex_)> lock(mutex_);
+
+    OPENAUTO_LOG(info) << "[InputDevice] pause()";
+    parent_.removeEventFilter(this);
+}
+
+void InputDevice::resume()
+{
+    std::lock_guard<decltype(mutex_)> lock(mutex_);
+
+    OPENAUTO_LOG(info) << "[InputDevice] resume()";
+    parent_.installEventFilter(this);
+}
+
 bool InputDevice::eventFilter(QObject* obj, QEvent* event)
 {
     std::lock_guard<decltype(mutex_)> lock(mutex_);

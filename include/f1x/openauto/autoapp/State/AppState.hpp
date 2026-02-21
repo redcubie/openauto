@@ -22,6 +22,8 @@ public:
     explicit AppStateSignals(boost::asio::io_service& ioService);
     virtual ~AppStateSignals() = default;
 
+    boost::signals2::signal<void (bool)> changeVideoFocus;
+    boost::signals2::signal<void (bool)> videoFocusRequest;
 private:
     boost::asio::io_service& ioService_;
 };

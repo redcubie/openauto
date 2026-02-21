@@ -46,6 +46,8 @@ public:
     virtual bool init() = 0;
     virtual void write(aasdk::messenger::Timestamp::ValueType timestamp, const aasdk::common::DataConstBuffer& buffer) = 0;
     virtual void stop() = 0;
+    virtual void pause() = 0;
+    virtual void resume() = 0;
 
     virtual aap_protobuf::service::media::sink::message::VideoFrameRateType getVideoFPS() const = 0;
     virtual aap_protobuf::service::media::sink::message::VideoCodecResolutionType getVideoResolution() const = 0;

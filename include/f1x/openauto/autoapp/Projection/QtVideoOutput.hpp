@@ -43,15 +43,21 @@ public:
     bool init() override;
     void write(uint64_t timestamp, const aasdk::common::DataConstBuffer& buffer) override;
     void stop() override;
+    void pause() override;
+    void resume() override;
 
 signals:
     void startPlayback();
     void stopPlayback();
+    void pausePlayback();
+    void resumePlayback();
 
 protected slots:
     void createVideoOutput();
     void onStartPlayback();
     void onStopPlayback();
+    void onPausePlayback();
+    void onResumePlayback();
 
 private:
     SequentialBuffer videoBuffer_;

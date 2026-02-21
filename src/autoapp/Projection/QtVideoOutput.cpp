@@ -35,6 +35,8 @@ QtVideoOutput::QtVideoOutput(configuration::IConfiguration::Pointer configuratio
     this->moveToThread(QApplication::instance()->thread());
     connect(this, &QtVideoOutput::startPlayback, this, &QtVideoOutput::onStartPlayback, Qt::QueuedConnection);
     connect(this, &QtVideoOutput::stopPlayback, this, &QtVideoOutput::onStopPlayback, Qt::QueuedConnection);
+    connect(this, &QtVideoOutput::pausePlayback, this, &QtVideoOutput::onPausePlayback, Qt::QueuedConnection);
+    connect(this, &QtVideoOutput::resumePlayback, this, &QtVideoOutput::onResumePlayback, Qt::QueuedConnection);
     QMetaObject::invokeMethod(this, "createVideoOutput", Qt::BlockingQueuedConnection);
 }
 
@@ -62,6 +64,16 @@ void QtVideoOutput::stop()
     emit stopPlayback();
 }
 
+void QtVideoOutput::pause()
+{
+    emit pausePlayback();
+}
+
+void QtVideoOutput::resume()
+{
+    emit resumePlayback();
+}
+
 void QtVideoOutput::write(uint64_t, const aasdk::common::DataConstBuffer& buffer)
 {
     videoBuffer_.write(reinterpret_cast<const char*>(buffer.cdata), buffer.size);
@@ -72,8 +84,8 @@ void QtVideoOutput::onStartPlayback()
     videoWidget_->setAttribute(Qt::WA_OpaquePaintEvent, true);
     videoWidget_->setAttribute(Qt::WA_NoSystemBackground, true);
     videoWidget_->setAspectRatioMode(Qt::IgnoreAspectRatio);
-    videoWidget_->setFocus();
     videoWidget_->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
+    videoWidget_->setFocus();
     videoWidget_->raise();
     videoWidget_->setFullScreen(true);
     videoWidget_->show();
@@ -93,6 +105,21 @@ void QtVideoOutput::onStopPlayback()
     videoWidget_->clearFocus();
     mediaPlayer_->stop();
     mediaPlayer_->setMedia(QMediaContent());
+}
+
+void QtVideoOutput::onPausePlayback()
+{
+    videoWidget_->hide();
+    videoWidget_->clearFocus();
+}
+
+void QtVideoOutput::onResumePlayback()
+{
+    videoWidget_->setFocus();
+    videoWidget_->raise();
+    videoWidget_->setFullScreen(true);
+    videoWidget_->show();
+    videoWidget_->activateWindow();
 }
 
 }

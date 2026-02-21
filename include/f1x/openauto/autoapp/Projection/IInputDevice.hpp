@@ -42,6 +42,8 @@ public:
     virtual ~IInputDevice() = default;
     virtual void start(IInputDeviceEventHandler& eventHandler) = 0;
     virtual void stop() = 0;
+    virtual void pause() = 0;
+    virtual void resume() = 0;
     virtual ButtonCodes getSupportedButtonCodes() const = 0;
     virtual bool hasTouchscreen() const = 0;
     virtual QRect getTouchscreenGeometry() const = 0;

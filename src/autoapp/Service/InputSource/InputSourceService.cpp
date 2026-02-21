@@ -37,6 +37,22 @@ namespace f1x {
               OPENAUTO_LOG(info) << "[InputSourceService] start()";
               channel_->receive(this->shared_from_this());
             });
+
+            signalconns_.push_back(
+                appstate_->appsignals.changeVideoFocus.connect([this, self = this->shared_from_this()](bool visible) {
+                  strand_.dispatch([this, self = this->shared_from_this(), &visible]() {
+                    OPENAUTO_LOG(info) << "[InputSourceService] changeVideoFocus received";
+
+                    if (visible) {
+                      this->resume();
+                    } else {
+                      this->pause();
+                    }
+                  });
+                }));
+
+            // only start capturing input events when needed
+            this->pause();
           }
 
           void InputSourceService::stop() {
@@ -53,12 +69,16 @@ namespace f1x {
           void InputSourceService::pause() {
             strand_.dispatch([this, self = this->shared_from_this()]() {
               OPENAUTO_LOG(info) << "[InputSourceService] pause()";
+
+              inputDevice_->pause();
             });
           }
 
           void InputSourceService::resume() {
             strand_.dispatch([this, self = this->shared_from_this()]() {
               OPENAUTO_LOG(info) << "[InputSourceService] resume()";
+
+              inputDevice_->resume();
             });
           }
 

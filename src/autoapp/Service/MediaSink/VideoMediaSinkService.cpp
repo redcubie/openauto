@@ -36,6 +36,21 @@ namespace f1x {
               OPENAUTO_LOG(info) << "[VideoMediaSinkService] start()";
               OPENAUTO_LOG(info) << "[VideoMediaSinkService] Channel "
                                  << aasdk::messenger::channelIdToString(channel_->getId());
+
+              signalconns_.push_back(appstate_->appsignals.changeVideoFocus.connect(
+                  [this, self = this->shared_from_this()](bool visible) {
+                    strand_.dispatch([this, self = this->shared_from_this(), &visible]() {
+                      OPENAUTO_LOG(info) << "[VideoMediaSinkService] changeVideoFocus received";
+                      this->sendVideoFocusIndication(visible);
+                      if (visible) {
+                        this->resume();
+                      } else {
+                        this->pause();
+                      }
+                    });
+                  },
+                  boost::signals2::at_front));
+
               channel_->receive(this->shared_from_this());
             });
           }
@@ -58,6 +73,8 @@ namespace f1x {
               OPENAUTO_LOG(info) << "[VideoMediaSinkService] pause()";
               OPENAUTO_LOG(info) << "[VideoMediaSinkService] Channel "
                                  << aasdk::messenger::channelIdToString(channel_->getId());
+
+              videoOutput_->pause();
             });
           }
 
@@ -67,6 +84,7 @@ namespace f1x {
               OPENAUTO_LOG(info) << "[VideoMediaSinkService] Channel "
                                  << aasdk::messenger::channelIdToString(channel_->getId());
 
+              videoOutput_->resume();
             });
           }
 
@@ -122,9 +140,8 @@ namespace f1x {
             response.add_configuration_indices(0);
 
             auto promise = aasdk::channel::SendPromise::defer(strand_);
-            promise->then(std::bind(&VideoMediaSinkService::sendVideoFocusIndication, this->shared_from_this()),
-                          std::bind(&VideoMediaSinkService::onChannelError, this->shared_from_this(),
-                                    std::placeholders::_1));
+            promise->then([this, self = this->shared_from_this()]() { this->appstate_->appsignals.videoFocusRequest(true); },
+                          std::bind(&VideoMediaSinkService::onChannelError, this->shared_from_this(), std::placeholders::_1));
 
             channel_->sendChannelSetupResponse(response, std::move(promise));
             channel_->receive(this->shared_from_this());
@@ -210,34 +227,38 @@ namespace f1x {
             OPENAUTO_LOG(info) << "[VideoMediaSinkService] Display index: " << request.disp_channel_id() << ", focus mode: " << VideoFocusMode_Name(request.mode()) << ", focus reason: " << VideoFocusReason_Name(request.reason());
             #pragma GCC diagnostic pop
 
-            if (request.mode() ==
-                aap_protobuf::service::media::video::message::VideoFocusMode::VIDEO_FOCUS_NATIVE) {
+            bool shown = true;
+            if (request.mode() == aap_protobuf::service::media::video::message::VideoFocusMode::VIDEO_FOCUS_NATIVE) {
               // Return to OS
               OPENAUTO_LOG(info) << "[VideoMediaSinkService] Returning to OS.";
-              try {
-                if (!std::ifstream("/tmp/entityexit")) {
-                  std::ofstream("/tmp/entityexit");
-                }
-              } catch (...) {
-                OPENAUTO_LOG(error) << "[VideoMediaSinkService] Error in creating /tmp/entityexit";
-              }
+              shown = false;
+            } else if (request.mode() == aap_protobuf::service::media::video::message::VideoFocusMode::VIDEO_FOCUS_PROJECTED) {
+              OPENAUTO_LOG(info) << "[VideoMediaSinkService] Requesting video focus.";
+              shown = true;
+            } else {
+              OPENAUTO_LOG(error) << "[VideoMediaSinkService] Unhandled videoFocusRequest "
+                                  << aap_protobuf::service::media::video::message::VideoFocusMode_Name(request.mode());
             }
 
-            this->sendVideoFocusIndication();
+            strand_.dispatch(
+                [this, self = this->shared_from_this(), shown = shown]() { appstate_->appsignals.videoFocusRequest(shown); });
             channel_->receive(this->shared_from_this());
           }
 
-          void VideoMediaSinkService::sendVideoFocusIndication() {
+          void VideoMediaSinkService::sendVideoFocusIndication(bool shown) {
             OPENAUTO_LOG(info) << "[VideoMediaSinkService] sendVideoFocusIndication()";
 
             aap_protobuf::service::media::video::message::VideoFocusNotification videoFocusIndication;
-            videoFocusIndication.set_focus(
-                aap_protobuf::service::media::video::message::VideoFocusMode::VIDEO_FOCUS_PROJECTED);
+            if (shown) {
+              videoFocusIndication.set_focus(aap_protobuf::service::media::video::message::VideoFocusMode::VIDEO_FOCUS_PROJECTED);
+            } else {
+              videoFocusIndication.set_focus(aap_protobuf::service::media::video::message::VideoFocusMode::VIDEO_FOCUS_NATIVE);
+            }
             videoFocusIndication.set_unsolicited(false);
 
             auto promise = aasdk::channel::SendPromise::defer(strand_);
-            promise->then([]() { }, std::bind(&VideoMediaSinkService::onChannelError, this->shared_from_this(),
-                                             std::placeholders::_1));
+            promise->then([]() {},
+                          std::bind(&VideoMediaSinkService::onChannelError, this->shared_from_this(), std::placeholders::_1));
             channel_->sendVideoFocusIndication(videoFocusIndication, std::move(promise));
           }
         }

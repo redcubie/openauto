@@ -204,14 +204,12 @@ int main(int argc, char* argv[])
         app->start(std::move(socket));
     });
 
-    QObject::connect(&mainWindow, &autoapp::ui::MainWindow::TriggerAppStart, [&app]() {
+    QObject::connect(&mainWindow, &autoapp::ui::MainWindow::TriggerAppStart, [&appstate]() {
         OPENAUTO_LOG(debug) << "[AutoApp] TriggerAppStart: Manual start android auto.";
         try {
-            app->disableAutostartEntity = false;
-            app->resume();
-            app->waitForUSBDevice();
+            appstate->appsignals.changeVideoFocus(true);
         } catch (...) {
-            OPENAUTO_LOG(error) << "[AutoApp] TriggerAppStart: app->waitForUSBDevice();";
+            OPENAUTO_LOG(error) << "[AutoApp] TriggerAppStart: error";
         }
     });
 

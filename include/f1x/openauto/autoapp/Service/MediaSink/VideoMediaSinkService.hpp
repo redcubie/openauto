@@ -68,7 +68,8 @@ namespace f1x {
             void onChannelError(const aasdk::error::Error &e) override;
 
             void onVideoFocusRequest(const aap_protobuf::service::media::video::message::VideoFocusRequestNotification &request) override;
-            void sendVideoFocusIndication();
+
+            void sendVideoFocusIndication(bool shown);
           protected:
             using std::enable_shared_from_this<VideoMediaSinkService>::shared_from_this;
             boost::asio::io_service::strand strand_;
