@@ -80,7 +80,6 @@ signals:
     void TriggerScriptNight();
     void openConnectDialog();
     void openWifiDialog();
-    void openUpdateDialog();
     void showBrightnessSlider();
     void showVolumeSlider();
     void showAlphaSlider();
@@ -220,11 +219,6 @@ private:
 
     bool lightsensor = false;
     bool holidaybg = false;
-
-    bool csmtupdate = false;
-    bool udevupdate = false;
-    bool openautoupdate = false;
-    bool systemupdate = false;
 
     QBluetoothLocalDevice *localDevice;
 
