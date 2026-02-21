@@ -67,7 +67,6 @@ MainWindow::MainWindow(configuration::IConfiguration::Pointer configuration, QWi
     this->nightModeEnabled = check_file_exist(this->nightModeFile);
     this->devModeEnabled = check_file_exist(this->devModeFile);
     this->wifiButtonForce = check_file_exist(this->wifiButtonFile);
-    this->cameraButtonForce = check_file_exist(this->cameraButtonFile);
     this->brightnessButtonForce = check_file_exist(this->brightnessButtonFile);
     this->systemDebugmode = check_file_exist(this->debugModeFile);
     this->lightsensor = check_file_exist(this->lsFile);
@@ -171,28 +170,6 @@ MainWindow::MainWindow(configuration::IConfiguration::Pointer configuration, QWi
     QTimer *timer=new QTimer(this);
     connect(timer, SIGNAL(timeout()),this,SLOT(showTime()));
     timer->start(1000);
-
-    // enable connects while cam is enabled
-    if (this->cameraButtonForce) {
-        connect(ui_->pushButtonCameraShow, &QPushButton::clicked, this, &MainWindow::cameraShow);
-        connect(ui_->pushButtonCameraShow, &QPushButton::clicked, this, &MainWindow::cameraControlShow);
-        connect(ui_->pushButtonCameraShow2, &QPushButton::clicked, this, &MainWindow::cameraShow);
-        connect(ui_->pushButtonCameraShow2, &QPushButton::clicked, this, &MainWindow::cameraControlShow);
-        connect(ui_->pushButtonCameraHide, &QPushButton::clicked, this, &MainWindow::cameraHide);
-        connect(ui_->pushButtonCameraHide, &QPushButton::clicked, this, &MainWindow::cameraControlHide);
-        connect(ui_->pushButtonStop, &QPushButton::clicked, this, &MainWindow::cameraStop);
-        connect(ui_->pushButtonRecord, &QPushButton::clicked, this, &MainWindow::cameraRecord);
-        connect(ui_->pushButtonSave, &QPushButton::clicked, this, &MainWindow::cameraSave);
-        connect(ui_->pushButtonUp, &QPushButton::clicked, this, &MainWindow::cameraPosYUp);
-        connect(ui_->pushButtonDown, &QPushButton::clicked, this, &MainWindow::cameraPosYDown);
-        connect(ui_->pushButtonPlus, &QPushButton::clicked, this, &MainWindow::cameraZoomPlus);
-        connect(ui_->pushButtonMinus, &QPushButton::clicked, this, &MainWindow::cameraZoomMinus);
-        this->camera_ycorection=configuration->getCSValue("RPICAM_YCORRECTION").toInt();
-        this->camera_zoom=configuration->getCSValue("RPICAM_ZOOM").toInt();
-    } else {
-        ui_->pushButtonCameraShow->hide();
-        ui_->pushButtonCameraShow2->hide();
-    }
 
     // show debug button if enabled
     if (!this->systemDebugmode) {
@@ -361,10 +338,6 @@ MainWindow::MainWindow(configuration::IConfiguration::Pointer configuration, QWi
         connect(ui_->pushButton_c6, &QPushButton::clicked, this, &MainWindow::customButtonPressed6);
     }
 
-    // as default hide camera controls
-    ui_->cameraWidget->hide();
-    ui_->pushButtonRecordActive->hide();
-
     // fill gui with dummys if needed
     if (this->c1ButtonForce || this->c2ButtonForce || this->c3ButtonForce || this->c4ButtonForce || this->c5ButtonForce || this->c6ButtonForce) {
         if (!this->c1ButtonForce && !this->c2ButtonForce) {
@@ -500,9 +473,6 @@ MainWindow::MainWindow(configuration::IConfiguration::Pointer configuration, QWi
         ui_->pushButtonVolume->hide();
         ui_->pushButtonVolume2->hide();
     }
-
-    // Hide recordings button
-    ui_->pushButtonRecordings->hide();
 
     watcher_tmp = new QFileSystemWatcher(this);
     watcher_tmp->addPath("/tmp");
@@ -776,7 +746,6 @@ void f1x::openauto::autoapp::ui::MainWindow::updateAlpha()
         ui_->pushButtonNoWiFiDevice2->setStyleSheet( "background-color: rgba(136, 138, 133, " + alp + " ); color: rgb(255, 255, 255); border-radius: 4px; border: 2px solid rgba(255,255,255,0.5);");
         ui_->pushButtonDay2->setStyleSheet( "background-color: rgba(136, 138, 133, " + alp + " ); color: rgb(255, 255, 255); border-radius: 4px; border: 2px solid rgba(255,255,255,0.5);");
         ui_->pushButtonNight2->setStyleSheet( "background-color: rgba(136, 138, 133, " + alp + " ); color: rgb(255, 255, 255); border-radius: 4px; border: 2px solid rgba(255,255,255,0.5);");
-        ui_->pushButtonCameraShow2->setStyleSheet( "background-color: rgba(136, 138, 133, " + alp + " ); color: rgb(255, 255, 255); border-radius: 4px; border: 2px solid rgba(255,255,255,0.5);");
         ui_->pushButtonVolume2->setStyleSheet( "background-color: rgba(136, 138, 133, " + alp + " ); color: rgb(255, 255, 255); border-radius: 4px; border: 2px solid rgba(255,255,255,0.5);");
         ui_->pushButtonDebug2->setStyleSheet( "background-color: rgba(136, 138, 133, " + alp + " ); color: rgb(255, 255, 255); border-radius: 4px; border: 2px solid rgba(255,255,255,0.5);");
     }
@@ -803,44 +772,6 @@ void f1x::openauto::autoapp::ui::MainWindow::switchGuiToDay()
     ui_->pushButtonDay2->hide();
     ui_->BrightnessSliderControl->hide();
 }
-
-void f1x::openauto::autoapp::ui::MainWindow::cameraControlHide()
-{
-    if (this->cameraButtonForce) {
-        ui_->cameraWidget->hide();
-        if (!this->oldGUIStyle) {
-            ui_->menuWidget->show();
-        } else {
-            ui_->oldmenuWidget->show();
-        }
-    }
-}
-
-void f1x::openauto::autoapp::ui::MainWindow::cameraControlShow()
-{
-    if (this->cameraButtonForce) {
-        if (!this->oldGUIStyle) {
-            ui_->menuWidget->hide();
-        } else {
-            ui_->oldmenuWidget->hide();
-        }
-        ui_->cameraWidget->show();
-
-        // check if dashcam is recording
-        if (std::ifstream("/tmp/dashcam_is_recording")) {
-            if (ui_->pushButtonRecordActive->isVisible() == false) {
-                ui_->pushButtonRecordActive->show();
-                ui_->pushButtonRecord->hide();
-            }
-        } else {
-            if (ui_->pushButtonRecordActive->isVisible() == true) {
-                ui_->pushButtonRecordActive->hide();
-                ui_->pushButtonRecord->show();
-            }
-        }
-    }
-}
-
 
 
 void f1x::openauto::autoapp::ui::MainWindow::toggleExit()
@@ -1135,16 +1066,12 @@ void f1x::openauto::autoapp::ui::MainWindow::tmpChanged()
             ui_->headerWidget->hide();
             CloseAllDialogs();
         }
-        if (ui_->cameraWidget->isVisible() == true) {
-            ui_->cameraWidget->hide();
-        }
         if (ui_->VolumeSliderControl->isVisible() == true) {
             ui_->VolumeSliderControl->hide();
         }
         if (ui_->BrightnessSliderControl->isVisible() == true) {
             ui_->BrightnessSliderControl->hide();
         }
-        cameraHide();
         if (ui_->clockOnlyWidget->isVisible() == false) {
             ui_->clockOnlyWidget->show();
         }
@@ -1297,38 +1224,6 @@ void f1x::openauto::autoapp::ui::MainWindow::tmpChanged()
         }
     }
 
-    // camera stuff
-    if (this->cameraButtonForce) {
-
-        // check if dashcam is recording
-        this->dashCamRecording = check_file_exist("/tmp/dashcam_is_recording");
-
-        if (this->dashCamRecording) {
-            if (ui_->dcRecording->isVisible() == false) {
-                ui_->dcRecording->show();
-            }
-        } else {
-            if (ui_->dcRecording->isVisible() == true) {
-                ui_->dcRecording->hide();
-            }
-        }
-
-        // show recording state if dashcam is visible
-        if (ui_->cameraWidget->isVisible() == true) {
-            if (this->dashCamRecording) {
-                if (ui_->pushButtonRecord->isVisible() == true) {
-                    ui_->pushButtonRecordActive->show();
-                    ui_->pushButtonRecord->hide();
-                }
-            } else {
-                if (ui_->pushButtonRecordActive->isVisible() == true) {
-                    ui_->pushButtonRecord->show();
-                    ui_->pushButtonRecordActive->hide();
-                }
-            }
-        }
-    }
-
     // check if shutdown is external triggered and init clean app exit
     if (std::ifstream("/tmp/external_exit")) {
         f1x::openauto::autoapp::ui::MainWindow::MainWindow::exit();
@@ -1385,9 +1280,6 @@ void f1x::openauto::autoapp::ui::MainWindow::tmpChanged()
 
     // handle dummys in classic menu
     int button_count = 0;
-    if (ui_->pushButtonCameraShow2->isVisible() == true) {
-        button_count = button_count + 1;
-    }
     if (ui_->AAWIFIWidget2->isVisible() == true) {
         button_count = button_count + 1;
     }
