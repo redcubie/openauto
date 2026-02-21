@@ -334,8 +334,6 @@ comboBoxBluetooth->addItem(QCoreApplication::translate("SettingsWindow", "none",
     configuration_->setTouchscreenEnabled(ui_->checkBoxEnableTouchscreen->isChecked());
     this->saveButtonCheckBoxes();
 
-    configuration_->playerButtonControl(ui_->checkBoxPlayerControl->isChecked());
-
     if (ui_->comboBoxBluetooth->currentText() == "none") {
       configuration_->setBluetoothAdapterAddress(""); // or any string that indicates no adapter
     } else {
@@ -620,7 +618,6 @@ comboBoxBluetooth->addItem(QCoreApplication::translate("SettingsWindow", "none",
 
     ui_->checkBoxEnableTouchscreen->setChecked(configuration_->getTouchscreenEnabled());
     this->loadButtonCheckBoxes();
-    ui_->checkBoxPlayerControl->setChecked(configuration_->playerButtonControl());
 
     ui_->disableProjectionButton->setChecked(!configuration_->getWirelessProjectionEnabled());
 
