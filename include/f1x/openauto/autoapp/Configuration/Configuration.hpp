@@ -72,19 +72,6 @@ public:
     void hideWarning(bool value) override;
     bool hideWarning() const override;
 
-    std::string getMp3MasterPath() const override;
-    void setMp3MasterPath(const std::string& value) override;
-    std::string getMp3SubFolder() const override;
-    void setMp3SubFolder(const std::string& value) override;
-    int32_t getMp3Track() const override;
-    void setMp3Track(int32_t value) override;
-    bool mp3AutoPlay() const override;
-    void mp3AutoPlay(bool value) override;
-    bool showAutoPlay() const override;
-    void showAutoPlay(bool value) override;
-    bool instantPlay() const override;
-    void instantPlay(bool value) override;
-
     QString getCSValue(QString searchString) const override;
     QString readFileContent(QString fileName) const override;
     QString getParamFromFile(QString fileName, QString searchString) const override;
@@ -143,12 +130,6 @@ private:
     bool hideBrightnessControl_;
     bool showNetworkinfo_;
     bool hideWarning_;
-    std::string mp3MasterPath_;
-    std::string mp3SubFolder_;
-    int32_t mp3Track_;
-    bool mp3AutoPlay_;
-    bool showAutoPlay_;
-    bool instantPlay_;
 
     aap_protobuf::service::media::sink::message::VideoFrameRateType videoFPS_;
     aap_protobuf::service::media::sink::message::VideoCodecResolutionType videoResolution_;
@@ -185,13 +166,6 @@ private:
     static const std::string cGeneralHideWarningKey;
 
     static const std::string cGeneralHandednessOfTrafficTypeKey;
-
-    static const std::string cGeneralMp3MasterPathKey;
-    static const std::string cGeneralMp3SubFolderKey;
-    static const std::string cGeneralMp3TrackKey;
-    static const std::string cGeneralMp3AutoPlayKey;
-    static const std::string cGeneralShowAutoPlayKey;
-    static const std::string cGeneralInstantPlayKey;
 
     static const std::string cVideoFPSKey;
     static const std::string cVideoResolutionKey;

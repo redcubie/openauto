@@ -43,13 +43,6 @@ const std::string Configuration::cGeneralHideWarningKey = "General.HideWarning";
 
 const std::string Configuration::cGeneralHandednessOfTrafficTypeKey = "General.HandednessOfTrafficType";
 
-const std::string Configuration::cGeneralMp3MasterPathKey = "General.Mp3MasterPath";
-const std::string Configuration::cGeneralMp3SubFolderKey = "General.Mp3SubFolder";
-const std::string Configuration::cGeneralMp3TrackKey = "General.Mp3Track";
-const std::string Configuration::cGeneralMp3AutoPlayKey = "General.Mp3AutoPlay";
-const std::string Configuration::cGeneralShowAutoPlayKey = "General.ShowAutoPlay";
-const std::string Configuration::cGeneralInstantPlayKey = "General.InstantPlay";
-
 const std::string Configuration::cVideoFPSKey = "Video.FPS";
 const std::string Configuration::cVideoResolutionKey = "Video.Resolution";
 const std::string Configuration::cVideoScreenDPIKey = "Video.ScreenDPI";
@@ -114,12 +107,6 @@ void Configuration::load()
         hideBrightnessControl_ = iniConfig.get<bool>(cGeneralHideBrightnessControlKey, false);
         hideWarning_ = iniConfig.get<bool>(cGeneralHideWarningKey, false);
         showNetworkinfo_ = iniConfig.get<bool>(cGeneralShowNetworkinfoKey, false);
-        mp3MasterPath_ = iniConfig.get<std::string>(cGeneralMp3MasterPathKey, "/media/MYMEDIA");
-        mp3SubFolder_ = iniConfig.get<std::string>(cGeneralMp3SubFolderKey, "/");
-        mp3Track_ = iniConfig.get<size_t>(cGeneralMp3TrackKey, 0);
-        mp3AutoPlay_ = iniConfig.get<bool>(cGeneralMp3AutoPlayKey, false);
-        showAutoPlay_ = iniConfig.get<bool>(cGeneralShowAutoPlayKey, false);
-        instantPlay_ = iniConfig.get<bool>(cGeneralInstantPlayKey, false);
 
         videoFPS_ = static_cast<aap_protobuf::service::media::sink::message::VideoFrameRateType>(iniConfig.get<uint32_t>(cVideoFPSKey,
                                                                                              aap_protobuf::service::media::sink::message::VideoFrameRateType::VIDEO_FPS_30));
@@ -172,12 +159,6 @@ void Configuration::reset()
     hideBrightnessControl_ = false;
     hideWarning_ = false;
     showNetworkinfo_ = false;
-    mp3MasterPath_ = "/media/MYMEDIA";
-    mp3SubFolder_ = "/";
-    mp3Track_ = 0;
-    mp3AutoPlay_ = false;
-    showAutoPlay_ = false;
-    instantPlay_ = false;
     videoFPS_ = aap_protobuf::service::media::sink::message::VideoFrameRateType::VIDEO_FPS_30;
     videoResolution_ = aap_protobuf::service::media::sink::message::VideoCodecResolutionType::VIDEO_800x480;
     screenDPI_ = 140;
@@ -214,12 +195,6 @@ void Configuration::save()
     iniConfig.put<bool>(cGeneralHideBrightnessControlKey, hideBrightnessControl_);
     iniConfig.put<bool>(cGeneralHideWarningKey, hideWarning_);
     iniConfig.put<bool>(cGeneralShowNetworkinfoKey, showNetworkinfo_);
-    iniConfig.put<std::string>(cGeneralMp3MasterPathKey, mp3MasterPath_);
-    iniConfig.put<std::string>(cGeneralMp3SubFolderKey, mp3SubFolder_);
-    iniConfig.put<int32_t>(cGeneralMp3TrackKey, mp3Track_);
-    iniConfig.put<bool>(cGeneralMp3AutoPlayKey, mp3AutoPlay_);
-    iniConfig.put<bool>(cGeneralShowAutoPlayKey, showAutoPlay_);
-    iniConfig.put<bool>(cGeneralInstantPlayKey, instantPlay_);
 
     iniConfig.put<uint32_t>(cVideoFPSKey, static_cast<uint32_t>(videoFPS_));
     iniConfig.put<uint32_t>(cVideoResolutionKey, static_cast<uint32_t>(videoResolution_));
@@ -382,66 +357,6 @@ void Configuration::showNetworkinfo(bool value)
 bool Configuration::showNetworkinfo() const
 {
     return showNetworkinfo_;
-}
-
-std::string Configuration::getMp3MasterPath() const
-{
-    return mp3MasterPath_;
-}
-
-void Configuration::setMp3MasterPath(const std::string& value)
-{
-    mp3MasterPath_ = value;
-}
-
-std::string Configuration::getMp3SubFolder() const
-{
-    return mp3SubFolder_;
-}
-
-void Configuration::setMp3Track(int32_t value)
-{
-    mp3Track_ = value;
-}
-
-void Configuration::setMp3SubFolder(const std::string& value)
-{
-    mp3SubFolder_ = value;
-}
-
-int32_t Configuration::getMp3Track() const
-{
-    return mp3Track_;
-}
-
-void Configuration::mp3AutoPlay(bool value)
-{
-    mp3AutoPlay_ = value;
-}
-
-bool Configuration::mp3AutoPlay() const
-{
-    return mp3AutoPlay_;
-}
-
-void Configuration::showAutoPlay(bool value)
-{
-    showAutoPlay_ = value;
-}
-
-bool Configuration::showAutoPlay() const
-{
-    return showAutoPlay_;
-}
-
-void Configuration::instantPlay(bool value)
-{
-    instantPlay_ = value;
-}
-
-bool Configuration::instantPlay() const
-{
-    return instantPlay_;
 }
 
 aap_protobuf::service::media::sink::message::VideoFrameRateType Configuration::getVideoFPS() const

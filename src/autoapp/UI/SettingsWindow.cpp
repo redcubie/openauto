@@ -308,9 +308,6 @@ comboBoxBluetooth->addItem(QCoreApplication::translate("SettingsWindow", "none",
     configuration_->showCursor(ui_->checkBoxShowCursor->isChecked());
     configuration_->hideBrightnessControl(ui_->checkBoxHideBrightnessControl->isChecked());
     configuration_->showNetworkinfo(ui_->checkBoxNetworkinfo->isChecked());
-    configuration_->mp3AutoPlay(ui_->checkBoxAutoPlay->isChecked());
-    configuration_->showAutoPlay(ui_->checkBoxShowPlayer->isChecked());
-    configuration_->instantPlay(ui_->checkBoxInstantPlay->isChecked());
     configuration_->hideWarning(ui_->checkBoxDontShowAgain->isChecked());
 
     configuration_->setVideoFPS(ui_->radioButton30FPS->isChecked()
@@ -601,9 +598,6 @@ comboBoxBluetooth->addItem(QCoreApplication::translate("SettingsWindow", "none",
     ui_->checkBoxShowCursor->setChecked(configuration_->showCursor());
     ui_->checkBoxHideBrightnessControl->setChecked(configuration_->hideBrightnessControl());
     ui_->checkBoxNetworkinfo->setChecked(configuration_->showNetworkinfo());
-    ui_->checkBoxAutoPlay->setChecked(configuration_->mp3AutoPlay());
-    ui_->checkBoxShowPlayer->setChecked(configuration_->showAutoPlay());
-    ui_->checkBoxInstantPlay->setChecked(configuration_->instantPlay());
     ui_->checkBoxDontShowAgain->setChecked(configuration_->hideWarning());
 
     ui_->radioButton30FPS->setChecked(configuration_->getVideoFPS() ==

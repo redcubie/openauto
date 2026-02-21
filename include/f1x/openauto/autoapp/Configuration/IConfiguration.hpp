@@ -75,19 +75,6 @@ public:
     virtual void hideWarning(bool value) = 0;
     virtual bool hideWarning() const = 0;
 
-    virtual std::string getMp3MasterPath() const = 0;
-    virtual void setMp3MasterPath(const std::string& value) = 0;
-    virtual std::string getMp3SubFolder() const = 0;
-    virtual void setMp3SubFolder(const std::string& value) = 0;
-    virtual int32_t getMp3Track() const = 0;
-    virtual void setMp3Track(int32_t value) = 0;
-    virtual bool mp3AutoPlay() const = 0;
-    virtual void mp3AutoPlay(bool value) = 0;
-    virtual bool showAutoPlay() const = 0;
-    virtual void showAutoPlay(bool value) = 0;
-    virtual bool instantPlay() const = 0;
-    virtual void instantPlay(bool value) = 0;
-
     virtual QString getCSValue(QString searchString) const = 0;
     virtual QString readFileContent(QString fileName) const = 0;
     virtual QString getParamFromFile(QString fileName, QString searchString) const = 0;
