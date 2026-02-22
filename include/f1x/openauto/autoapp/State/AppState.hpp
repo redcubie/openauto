@@ -3,6 +3,7 @@
 #include <boost/asio.hpp>
 #include <boost/signals2.hpp>
 
+#include <f1x/openauto/autoapp/Configuration/Configuration.hpp>
 #include <f1x/openauto/autoapp/State/AppStateSignals.hpp>
 
 
@@ -24,6 +25,7 @@ public:
     virtual ~AppState() = default;
 
     AppStateSignals appsignals;
+    configuration::IConfiguration::Pointer configuration;
 
 protected:
 
