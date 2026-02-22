@@ -598,16 +598,6 @@ void Configuration::setTouchscreenEnabled(bool value)
     enableTouchscreen_ = value;
 }
 
-bool Configuration::playerButtonControl() const
-{
-    return enablePlayerControl_;
-}
-
-void Configuration::playerButtonControl(bool value)
-{
-    enablePlayerControl_ = value;
-}
-
 Configuration::ButtonCodes Configuration::getButtonCodes() const
 {
     return buttonCodes_;

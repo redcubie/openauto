@@ -93,7 +93,6 @@ MainWindow::MainWindow(configuration::IConfiguration::Pointer configuration, QWi
 
     connect(ui_->pushButtonSettings, &QPushButton::clicked, this, &MainWindow::openSettings);
     connect(ui_->pushButtonSettings2, &QPushButton::clicked, this, &MainWindow::openSettings);
-    connect(ui_->pushButtonUpdate, &QPushButton::clicked, this, &MainWindow::openUpdateDialog);
     connect(ui_->pushButtonExit, &QPushButton::clicked, this, &MainWindow::toggleExit);
     connect(ui_->pushButtonExit2, &QPushButton::clicked, this, &MainWindow::toggleExit);
     connect(ui_->pushButtonShutdown, &QPushButton::clicked, this, &MainWindow::exit);
@@ -142,7 +141,6 @@ MainWindow::MainWindow(configuration::IConfiguration::Pointer configuration, QWi
 
     ui_->SysinfoTopLeft2->hide();
 
-    ui_->pushButtonUpdate->hide();
     ui_->label_dummy_right->hide();
 
     ui_->dcRecording->hide();
@@ -1388,35 +1386,6 @@ void f1x::openauto::autoapp::ui::MainWindow::tmpChanged()
         }
     }
     MainWindow::updateAlpha();
-
-    // update notify
-    this->csmtupdate = check_file_exist("/tmp/csmt_update_available");
-    this->udevupdate = check_file_exist("/tmp/udev_update_available");
-    this->openautoupdate = check_file_exist("/tmp/openauto_update_available");
-    this->systemupdate = check_file_exist("/tmp/system_update_available");
-
-    if (this->csmtupdate || this->udevupdate || this->openautoupdate || this->systemupdate) {
-        if (ui_->pushButtonUpdate->isVisible() == false) {
-            ui_->pushButtonUpdate->show();
-            ui_->label_left->show();
-            ui_->label_right->show();
-            if (this->devModeEnabled) {
-                ui_->devlabel_right->hide();
-            } else {
-                ui_->label_dummy_right->show();
-            }
-        }
-    } else {
-        if (ui_->pushButtonUpdate->isVisible() == true) {
-            ui_->pushButtonUpdate->hide();
-            ui_->label_left->hide();
-            ui_->label_right->hide();
-            ui_->label_dummy_right->hide();
-            if (this->devModeEnabled) {
-                ui_->devlabel_right->show();
-            }
-        }
-   }
 
     if (std::ifstream("/tmp/btdevice") || std::ifstream("/tmp/media_playing") || std::ifstream("/tmp/dev_mode_enabled") || std::ifstream("/tmp/android_device")) {
         if (ui_->labelLock->isVisible() == false) {

@@ -72,7 +72,6 @@ public:
     void hideWarning(bool value) override;
     bool hideWarning() const override;
 
-    // const std::string Configuration::cGeneralDriverPositionKey
     std::string getDisplayName() const override;
     void setDisplayName(const std::string& value) override;
     std::string getVehicleMake() const override;
@@ -118,8 +117,6 @@ public:
 
     bool getTouchscreenEnabled() const override;
     void setTouchscreenEnabled(bool value) override;
-    bool playerButtonControl() const override;
-    void playerButtonControl(bool value) override;
     ButtonCodes getButtonCodes() const override;
     void setButtonCodes(const ButtonCodes& value) override;
 

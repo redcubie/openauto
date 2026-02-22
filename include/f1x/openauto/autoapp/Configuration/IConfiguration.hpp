@@ -119,8 +119,6 @@ public:
 
     virtual bool getTouchscreenEnabled() const = 0;
     virtual void setTouchscreenEnabled(bool value) = 0;
-    virtual bool playerButtonControl() const = 0;
-    virtual void playerButtonControl(bool value) = 0;
     virtual ButtonCodes getButtonCodes() const = 0;
     virtual void setButtonCodes(const ButtonCodes& value) = 0;
 
