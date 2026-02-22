@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QObject>
+#include <QUdpSocket>
 #include <boost/asio.hpp>
 #include <boost/signals2.hpp>
 
@@ -19,7 +20,7 @@ class AppStateSignals : public QObject
     Q_OBJECT
 
 public:
-    explicit AppStateSignals(boost::asio::io_service& ioService);
+    explicit AppStateSignals(boost::asio::io_service& ioService, QObject* parent = nullptr);
     virtual ~AppStateSignals() = default;
 
     boost::signals2::signal<void (bool)> changeVideoFocus;
@@ -27,6 +28,9 @@ public:
 
 private:
     boost::asio::io_service& ioService_;
+    static const QHostAddress groupaddr_;
+    static const qint16 groupport_;
+    QUdpSocket controlsock_;
 };
 
 }

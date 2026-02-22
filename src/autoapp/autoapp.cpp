@@ -131,7 +131,7 @@ int main(int argc, char* argv[])
 
     auto configuration = std::make_shared<autoapp::configuration::Configuration>();
 
-    auto appstate = std::make_shared<autoapp::state::AppState>(ioService);
+    auto appstate = std::make_shared<autoapp::state::AppState>(ioService, &qApplication);
 
     autoapp::ui::MainWindow mainWindow(configuration);
     //mainWindow.setWindowFlags(Qt::WindowStaysOnTopHint);
