@@ -28,6 +28,14 @@ public:
     boost::signals2::signal<void (bool)> videoFocusRequest;
 
 private:
+    typedef enum {
+        VIDEO_FOCUS_REQUEST = 1,
+        VIDEO_FOCUS_RESPONSE = 2,
+
+    } ctrlmsg_type_t;
+
+    void handle_videoFocusRequest(bool shown);
+
     boost::asio::io_service& ioService_;
     configuration::IConfiguration::Pointer configuration_;
     QHostAddress groupaddr_;

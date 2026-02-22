@@ -6,9 +6,7 @@ namespace f1x {
       namespace state {
 
         AppState::AppState(boost::asio::io_service &ioService, configuration::IConfiguration::Pointer configuration, QObject *parent)
-          : appsignals(AppStateSignals(ioService, configuration, parent)), ioService_(ioService) {
-          appsignals.videoFocusRequest.connect([this](bool show) { this->appsignals.changeVideoFocus(show); });
-        }
+          : appsignals(AppStateSignals(ioService, configuration, parent)), ioService_(ioService) {}
       }
     }
   }
