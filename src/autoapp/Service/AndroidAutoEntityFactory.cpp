@@ -64,7 +64,7 @@ namespace f1x {
           auto pinger(std::make_shared<Pinger>(ioService_, 5000));
           return std::make_shared<AndroidAutoEntity>(ioService_, std::move(cryptor), std::move(transport),
                                                      std::move(messenger), configuration_, std::move(serviceList),
-                                                     std::move(pinger), std::move(appstate_));
+                                                     std::move(pinger), appstate_);
         }
 
       }
