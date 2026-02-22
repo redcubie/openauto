@@ -92,6 +92,15 @@ public:
     std::string getHeadUnitSoftwareBuild() const override;
     void setHeadUnitSoftwareBuild(const std::string& value) override;
 
+    bool getControlSocketEnabled() const;
+    void setControlSocketEnabled(const bool value);
+    std::string getControlSocketAddress() const;
+    void setControlSocketAddress(const std::string& value);
+    uint16_t getControlSocketPort() const;
+    void setControlSocketPort(const uint16_t value);
+    bool getControlSocketBypass() const;
+    void setControlSocketBypass(const bool value);
+
     QString getCSValue(QString searchString) const override;
     QString readFileContent(QString fileName) const override;
     QString getParamFromFile(QString fileName, QString searchString) const override;
@@ -160,6 +169,11 @@ private:
     std::string headUnitSoftwareVersion_;
     std::string headUnitSoftwareBuild_;
 
+    bool controlSocketEnabled_;
+    std::string controlSocketAddress_;
+    uint16_t controlSocketPort_;
+    bool controlSocketBypass_;
+
     aap_protobuf::service::media::sink::message::VideoFrameRateType videoFPS_;
     aap_protobuf::service::media::sink::message::VideoCodecResolutionType videoResolution_;
     size_t screenDPI_;
@@ -204,6 +218,11 @@ private:
     static const std::string cMetadataHeadUnitModelKey;
     static const std::string cMetadataHeadUnitSoftwareVersionKey;
     static const std::string cMetadataHeadUnitSoftwareBuildKey;
+
+    static const std::string cControlSocketEnabledKey;
+    static const std::string cControlSocketAddressKey;
+    static const std::string cControlSocketPortKey;
+    static const std::string cControlSocketBypassKey;
 
     static const std::string cVideoFPSKey;
     static const std::string cVideoResolutionKey;

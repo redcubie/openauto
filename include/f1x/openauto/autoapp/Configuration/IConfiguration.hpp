@@ -93,6 +93,15 @@ public:
     virtual std::string getHeadUnitSoftwareBuild() const = 0;
     virtual void setHeadUnitSoftwareBuild(const std::string& value) = 0;
 
+    virtual bool getControlSocketEnabled() const = 0;
+    virtual void setControlSocketEnabled(const bool value) = 0;
+    virtual std::string getControlSocketAddress() const = 0;
+    virtual void setControlSocketAddress(const std::string& value) = 0;
+    virtual uint16_t getControlSocketPort() const = 0;
+    virtual void setControlSocketPort(const uint16_t value) = 0;
+    virtual bool getControlSocketBypass() const = 0;
+    virtual void setControlSocketBypass(const bool value) = 0;
+
     virtual QString getCSValue(QString searchString) const = 0;
     virtual QString readFileContent(QString fileName) const = 0;
     virtual QString getParamFromFile(QString fileName, QString searchString) const = 0;

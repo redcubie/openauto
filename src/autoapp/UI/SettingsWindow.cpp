@@ -289,6 +289,11 @@ comboBoxBluetooth->addItem(QCoreApplication::translate("SettingsWindow", "none",
     configuration_->setHeadUnitSoftwareVersion(ui_->lineEditHeadUnitSoftwareVersion->text().toStdString());
     configuration_->setHeadUnitSoftwareBuild(ui_->lineEditHeadUnitSoftwareBuild->text().toStdString());
 
+    configuration_->setControlSocketEnabled(ui_->checkBoxControlSocketEnabled->isChecked());
+    configuration_->setControlSocketBypass(ui_->checkBoxControlSocketBypass->isChecked());
+    configuration_->setControlSocketAddress(ui_->lineEditControlSocketAddress->text().toStdString());
+    configuration_->setControlSocketPort(ui_->spinBoxControlSocketPort->value());
+
     configuration_->setVideoFPS(ui_->radioButton30FPS->isChecked()
                                 ? aap_protobuf::service::media::sink::message::VideoFrameRateType::VIDEO_FPS_30
                                 : aap_protobuf::service::media::sink::message::VideoFrameRateType::VIDEO_FPS_60);
@@ -386,6 +391,11 @@ comboBoxBluetooth->addItem(QCoreApplication::translate("SettingsWindow", "none",
     ui_->lineEditHeadUnitModel->setText(QString::fromStdString(configuration_->getHeadUnitModel()));
     ui_->lineEditHeadUnitSoftwareVersion->setText(QString::fromStdString(configuration_->getHeadUnitSoftwareVersion()));
     ui_->lineEditHeadUnitSoftwareBuild->setText(QString::fromStdString(configuration_->getHeadUnitSoftwareBuild()));
+
+    ui_->checkBoxControlSocketEnabled->setChecked(configuration_->getControlSocketEnabled());
+    ui_->checkBoxControlSocketBypass->setChecked(configuration_->getControlSocketBypass());
+    ui_->lineEditControlSocketAddress->setText(QString::fromStdString(configuration_->getControlSocketAddress()));
+    ui_->spinBoxControlSocketPort->setValue(configuration_->getControlSocketPort());
 
     ui_->radioButton30FPS->setChecked(configuration_->getVideoFPS() ==
                                       aap_protobuf::service::media::sink::message::VideoFrameRateType::VIDEO_FPS_30);

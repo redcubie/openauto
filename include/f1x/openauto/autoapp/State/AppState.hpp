@@ -20,7 +20,7 @@ class AppState
 
 public:
     typedef std::shared_ptr<AppState> Pointer;
-    explicit AppState(boost::asio::io_service& ioService, QObject* parent = nullptr);
+    explicit AppState(boost::asio::io_service& ioService, configuration::IConfiguration::Pointer configuration, QObject* parent = nullptr);
     virtual ~AppState() = default;
 
     AppStateSignals appsignals;

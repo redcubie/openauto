@@ -52,6 +52,11 @@ const std::string Configuration::cMetadataHeadUnitModelKey = "Metadata.HeadUnitM
 const std::string Configuration::cMetadataHeadUnitSoftwareVersionKey = "Metadata.HeadUnitSoftwareVersion";
 const std::string Configuration::cMetadataHeadUnitSoftwareBuildKey = "Metadata.HeadUnitSoftwareBuild";
 
+const std::string Configuration::cControlSocketEnabledKey = "ControlSocket.Enabled";
+const std::string Configuration::cControlSocketAddressKey = "ControlSocket.Address";
+const std::string Configuration::cControlSocketPortKey = "ControlSocket.Port";
+const std::string Configuration::cControlSocketBypassKey = "ControlSocket.Bypass";
+
 const std::string Configuration::cVideoFPSKey = "Video.FPS";
 const std::string Configuration::cVideoResolutionKey = "Video.Resolution";
 const std::string Configuration::cVideoScreenDPIKey = "Video.ScreenDPI";
@@ -127,6 +132,11 @@ void Configuration::load()
         headUnitSoftwareVersion_ = iniConfig.get<std::string>(cMetadataHeadUnitSoftwareVersionKey, "1.0");
         headUnitSoftwareBuild_ = iniConfig.get<std::string>(cMetadataHeadUnitSoftwareBuildKey, "1");
 
+        controlSocketEnabled_ = iniConfig.get<bool>(cControlSocketEnabledKey, false);
+        controlSocketAddress_ = iniConfig.get<std::string>(cControlSocketAddressKey, "");
+        controlSocketPort_ = iniConfig.get<uint16_t>(cControlSocketPortKey, 0);
+        controlSocketBypass_ = iniConfig.get<bool>(cControlSocketBypassKey, true);
+
         videoFPS_ = static_cast<aap_protobuf::service::media::sink::message::VideoFrameRateType>(iniConfig.get<uint32_t>(cVideoFPSKey,
                                                                                              aap_protobuf::service::media::sink::message::VideoFrameRateType::VIDEO_FPS_30));
 
@@ -186,6 +196,10 @@ void Configuration::reset()
     headUnitModel_ = "Crankshaft-NG Autoapp";
     headUnitSoftwareVersion_ = "1.0";
     headUnitSoftwareBuild_ = "1";
+    controlSocketEnabled_ = false;
+    controlSocketAddress_ = "";
+    controlSocketPort_ = 0;
+    controlSocketBypass_ = true;
     showNetworkinfo_ = false;
     videoFPS_ = aap_protobuf::service::media::sink::message::VideoFrameRateType::VIDEO_FPS_30;
     videoResolution_ = aap_protobuf::service::media::sink::message::VideoCodecResolutionType::VIDEO_800x480;
@@ -232,6 +246,11 @@ void Configuration::save()
     iniConfig.put<std::string>(cMetadataHeadUnitModelKey, headUnitModel_);
     iniConfig.put<std::string>(cMetadataHeadUnitSoftwareVersionKey, headUnitSoftwareVersion_);
     iniConfig.put<std::string>(cMetadataHeadUnitSoftwareBuildKey, headUnitSoftwareBuild_);
+
+    iniConfig.put<bool>(cControlSocketEnabledKey, controlSocketEnabled_);
+    iniConfig.put<std::string>(cControlSocketAddressKey, controlSocketAddress_);
+    iniConfig.put<uint16_t>(cControlSocketPortKey, controlSocketPort_);
+    iniConfig.put<bool>(cControlSocketBypassKey, controlSocketBypass_);
 
 
     iniConfig.put<uint32_t>(cVideoFPSKey, static_cast<uint32_t>(videoFPS_));
@@ -484,6 +503,39 @@ std::string Configuration::getHeadUnitSoftwareBuild() const
 void Configuration::setHeadUnitSoftwareBuild(const std::string &value)
 {
     headUnitSoftwareBuild_ = value;
+}
+
+bool Configuration::getControlSocketEnabled() const
+{
+    return controlSocketEnabled_;
+}
+void Configuration::setControlSocketEnabled(const bool value)
+{
+    controlSocketEnabled_ = value;
+}
+std::string Configuration::getControlSocketAddress() const
+{
+    return controlSocketAddress_;
+}
+void Configuration::setControlSocketAddress(const std::string& value)
+{
+    controlSocketAddress_ = value;
+}
+uint16_t Configuration::getControlSocketPort() const
+{
+    return controlSocketPort_;
+}
+void Configuration::setControlSocketPort(const uint16_t value)
+{
+    controlSocketPort_ = value;
+}
+bool Configuration::getControlSocketBypass() const
+{
+    return controlSocketBypass_;
+}
+void Configuration::setControlSocketBypass(const bool value)
+{
+    controlSocketBypass_ = value;
 }
 
 aap_protobuf::service::media::sink::message::VideoFrameRateType Configuration::getVideoFPS() const
