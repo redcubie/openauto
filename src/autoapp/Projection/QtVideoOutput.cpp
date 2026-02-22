@@ -85,11 +85,6 @@ void QtVideoOutput::onStartPlayback()
     videoWidget_->setAttribute(Qt::WA_NoSystemBackground, true);
     videoWidget_->setAspectRatioMode(Qt::IgnoreAspectRatio);
     videoWidget_->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
-    videoWidget_->setFocus();
-    videoWidget_->raise();
-    videoWidget_->setFullScreen(true);
-    videoWidget_->show();
-    videoWidget_->activateWindow();
 
     mediaPlayer_->setVideoOutput(videoWidget_.get());
     mediaPlayer_->setMedia(QMediaContent(), &videoBuffer_);
