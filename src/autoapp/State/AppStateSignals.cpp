@@ -37,6 +37,7 @@ namespace state {
 
             // ignore our own requests
             case VIDEO_FOCUS_REQUEST:
+            case DEVICE_CONNECT:
               break;
 
             default:
@@ -48,6 +49,7 @@ namespace state {
     }
 
     videoFocusRequest.connect([this](bool shown) { handle_videoFocusRequest(shown); });
+    deviceConnectedUpdate.connect([this](bool connected) { handle_deviceConnectedUpdate(connected); });
   }
 
   void AppStateSignals::handle_videoFocusRequest(bool shown) {
@@ -64,6 +66,16 @@ namespace state {
 
     if (configuration_->getControlSocketBypass()) {
       ioService_.dispatch([this, &shown]() { changeVideoFocus(shown); });
+    }
+  }
+
+  void AppStateSignals::handle_deviceConnectedUpdate(bool connected) {
+    if (configuration_->getControlSocketEnabled()) {
+      // send update to os menu handler
+      ioService_.dispatch([this, &connected]() {
+        char data[] = {DEVICE_CONNECT, connected};
+        controlsock_.writeDatagram(data, sizeof(data), groupaddr_, groupport_);
+      });
     }
   }
 

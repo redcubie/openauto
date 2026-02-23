@@ -55,6 +55,8 @@ namespace f1x {
             versionRequestPromise->then([]() {  }, std::bind(&AndroidAutoEntity::onChannelError, this->shared_from_this(),
                                                            std::placeholders::_1));
 
+            appstate_->appsignals.deviceConnectedUpdate(true);
+
             OPENAUTO_LOG(debug) << "[AndroidAutoEntity] Send Version Request.";
             controlServiceChannel_->sendVersionRequest(std::move(versionRequestPromise));
             controlServiceChannel_->receive(this->shared_from_this());
@@ -73,6 +75,8 @@ namespace f1x {
               messenger_->stop();
               transport_->stop();
               cryptor_->deinit();
+
+              appstate_->appsignals.deviceConnectedUpdate(false);
 
               for (auto &conn : signalconns_) {
                 conn.disconnect();

@@ -26,15 +26,18 @@ public:
 
     boost::signals2::signal<void (bool)> changeVideoFocus;
     boost::signals2::signal<void (bool)> videoFocusRequest;
+    boost::signals2::signal<void (bool)> deviceConnectedUpdate;
 
 private:
     typedef enum {
         VIDEO_FOCUS_REQUEST = 1,
         VIDEO_FOCUS_RESPONSE = 2,
+        DEVICE_CONNECT = 3,
 
     } ctrlmsg_type_t;
 
     void handle_videoFocusRequest(bool shown);
+    void handle_deviceConnectedUpdate(bool connected);
 
     boost::asio::io_service& ioService_;
     configuration::IConfiguration::Pointer configuration_;
