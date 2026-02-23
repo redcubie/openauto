@@ -6,7 +6,8 @@ namespace f1x {
       namespace state {
 
         AppState::AppState(boost::asio::io_service &ioService, configuration::IConfiguration::Pointer configuration, QObject *parent)
-          : appsignals(AppStateSignals(ioService, configuration, parent)), configuration(configuration), ioService_(ioService) {}
+          : appsignals(AppStateSignals(ioService, configuration, parent)),
+            datasignals(AppDataSignals(ioService, configuration, parent)), configuration(configuration), ioService_(ioService) {}
       }
     }
   }

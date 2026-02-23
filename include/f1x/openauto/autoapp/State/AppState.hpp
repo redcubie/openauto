@@ -5,6 +5,7 @@
 
 #include <f1x/openauto/autoapp/Configuration/Configuration.hpp>
 #include <f1x/openauto/autoapp/State/AppStateSignals.hpp>
+#include <f1x/openauto/autoapp/State/AppDataSignals.hpp>
 
 
 namespace f1x
@@ -25,6 +26,7 @@ public:
     virtual ~AppState() = default;
 
     AppStateSignals appsignals;
+    AppDataSignals datasignals;
     configuration::IConfiguration::Pointer configuration;
 
 protected:
