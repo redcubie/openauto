@@ -89,6 +89,10 @@ bool InputDevice::eventFilter(QObject* obj, QEvent* event)
         }
         else if(event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonRelease || event->type() == QEvent::MouseMove)
         {
+            return this->handleMouseEvent(event);
+        }
+        else if(event->type() == QEvent::TouchBegin || event->type() == QEvent::TouchEnd || event->type() == QEvent::TouchCancel || event->type() == QEvent::TouchUpdate)
+        {
             return this->handleTouchEvent(event);
         }
     }
@@ -202,7 +206,7 @@ bool InputDevice::handleKeyEvent(QEvent* event, QKeyEvent* key)
     return true;
 }
 
-bool InputDevice::handleTouchEvent(QEvent* event)
+bool InputDevice::handleMouseEvent(QEvent* event)
 {
     if(!configuration_->getTouchscreenEnabled())
     {
@@ -232,6 +236,75 @@ bool InputDevice::handleTouchEvent(QEvent* event)
         const uint32_t x = (static_cast<float>(mouse->pos().x()) / touchscreenGeometry_.width()) * displayGeometry_.width();
         const uint32_t y = (static_cast<float>(mouse->pos().y()) / touchscreenGeometry_.height()) * displayGeometry_.height();
         eventHandler_->onTouchEvent({type, x, y, 0});
+    }
+
+    return true;
+}
+
+bool InputDevice::handleTouchEvent(QEvent* event)
+{
+    if(!configuration_->getTouchscreenEnabled())
+    {
+        return true;
+    }
+
+    QTouchEvent* touch = static_cast<QTouchEvent*>(event);
+    auto points = touch->touchPoints();
+
+    std::vector<TouchEvent> positions;
+    std::vector<TouchEvent> events;
+    TouchEvent newevent;
+    uint32_t first = 0;
+    for (int i = 0; i < points.length(); i++)
+    {
+        auto point = points.at(i);
+
+        aap_protobuf::service::inputsource::message::PointerAction type;
+        bool nop = false;
+
+        switch(point.state()){
+            case Qt::TouchPointState::TouchPointPressed:
+                if (event->type() == QEvent::TouchBegin)
+                    type = aap_protobuf::service::inputsource::message::PointerAction::ACTION_DOWN;
+                else
+                    type = aap_protobuf::service::inputsource::message::PointerAction::ACTION_POINTER_DOWN;
+                break;
+            case Qt::TouchPointState::TouchPointMoved:
+                type = aap_protobuf::service::inputsource::message::PointerAction::ACTION_MOVED;
+                break;
+            case Qt::TouchPointState::TouchPointReleased:
+                if (event->type() == QEvent::TouchEnd)
+                    type = aap_protobuf::service::inputsource::message::PointerAction::ACTION_UP;
+                else
+                    type = aap_protobuf::service::inputsource::message::PointerAction::ACTION_POINTER_UP;
+                break;
+            case Qt::TouchPointState::TouchPointStationary:
+            default:
+                type = aap_protobuf::service::inputsource::message::PointerAction::ACTION_MOVED;
+                nop = true;
+                break;
+        }
+        
+        uint32_t id;
+        const uint32_t x = (static_cast<float>(point.pos().x()) / touchscreenGeometry_.width()) * displayGeometry_.width();
+        const uint32_t y = (static_cast<float>(point.pos().y()) / touchscreenGeometry_.height()) * displayGeometry_.height();
+        id = point.id();
+        OPENAUTO_LOG(debug) << "pointer " << point.id();
+        if (first == 0)
+            {first = id;}
+        
+        id = id - first;
+
+        positions.push_back({type, x, y, id});
+
+        if (!nop){
+            newevent = {type, 0, 0, (uint32_t)i};
+            events.push_back({type, 0, 0, (uint32_t)i});
+        }
+    }
+
+    for (const auto &newevent : events){
+        eventHandler_->onTouchEvents(newevent, positions);
     }
 
     return true;

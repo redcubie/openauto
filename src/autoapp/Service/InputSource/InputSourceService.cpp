@@ -159,7 +159,7 @@ namespace f1x {
           }
 
           void InputSourceService::onButtonEvent(const projection::ButtonEvent &event) {
-            OPENAUTO_LOG(error) << "[InputSourceService] onButtonEvent()";
+            OPENAUTO_LOG(info) << "[InputSourceService] onButtonEvent()";
             auto timestamp = std::chrono::duration_cast<std::chrono::microseconds>(
                 std::chrono::high_resolution_clock::now().time_since_epoch());
 
@@ -188,7 +188,7 @@ namespace f1x {
           }
 
           void InputSourceService::onTouchEvent(const projection::TouchEvent &event) {
-            OPENAUTO_LOG(error) << "[InputSourceService] onTouchEvent()";
+            OPENAUTO_LOG(info) << "[InputSourceService] onTouchEvent()";
             auto timestamp = std::chrono::duration_cast<std::chrono::microseconds>(
                 std::chrono::high_resolution_clock::now().time_since_epoch());
 
@@ -202,13 +202,43 @@ namespace f1x {
                   auto touchLocation = touchEvent->add_pointer_data();
                   touchLocation->set_x(event.x);
                   touchLocation->set_y(event.y);
-                  touchLocation->set_pointer_id(0);
+                  touchLocation->set_pointer_id(event.pointerId);
 
                   auto promise = aasdk::channel::SendPromise::defer(strand_);
                   promise->then([]() {}, std::bind(&InputSourceService::onChannelError, this->shared_from_this(),
                                                    std::placeholders::_1));
                   channel_->sendInputReport(inputReport, std::move(promise));
                 });
+          }
+
+          void InputSourceService::onTouchEvents(const projection::TouchEvent &newevent,
+                                                 const std::vector<projection::TouchEvent> &positions) {
+            OPENAUTO_LOG(info) << "[InputSourceService] onTouchEvents()";
+            auto timestamp = std::chrono::duration_cast<std::chrono::microseconds>(
+                std::chrono::high_resolution_clock::now().time_since_epoch());
+
+            strand_.dispatch([this, self = this->shared_from_this(), newevent = std::move(newevent),
+                              positions = std::move(positions), timestamp = std::move(timestamp)]() {
+              aap_protobuf::service::inputsource::message::InputReport inputReport;
+              inputReport.set_timestamp(timestamp.count());
+
+              auto touchEvent = inputReport.mutable_touch_event();
+              touchEvent->set_action(newevent.type);
+              OPENAUTO_LOG(debug) << "event type " << newevent.type << " num " << newevent.pointerId;
+              touchEvent->set_action_index(newevent.pointerId);
+              for (const auto &el : positions) {
+                auto touchLocation = touchEvent->add_pointer_data();
+                touchLocation->set_x(el.x);
+                touchLocation->set_y(el.y);
+                touchLocation->set_pointer_id(el.pointerId);
+                OPENAUTO_LOG(debug) << "input " << el.x << " " << el.y << " " << el.pointerId;
+              }
+
+              auto promise = aasdk::channel::SendPromise::defer(strand_);
+              promise->then([]() {},
+                            std::bind(&InputSourceService::onChannelError, this->shared_from_this(), std::placeholders::_1));
+              channel_->sendInputReport(inputReport, std::move(promise));
+            });
           }
         }
       }

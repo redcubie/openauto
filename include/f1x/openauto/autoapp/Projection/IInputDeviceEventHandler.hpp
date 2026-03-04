@@ -36,6 +36,7 @@ public:
 
     virtual void onButtonEvent(const ButtonEvent& event) = 0;
     virtual void onTouchEvent(const TouchEvent& event) = 0;
+    virtual void onTouchEvents(const TouchEvent &newevent, const std::vector<TouchEvent> &positions) = 0;
 };
 
 }

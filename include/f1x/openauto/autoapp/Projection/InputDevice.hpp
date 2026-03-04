@@ -52,6 +52,7 @@ private:
     void setVideoGeometry();
     bool handleKeyEvent(QEvent* event, QKeyEvent* key);
     void dispatchKeyEvent(ButtonEvent event);
+    bool handleMouseEvent(QEvent* event);
     bool handleTouchEvent(QEvent* event);
 
     QObject& parent_;

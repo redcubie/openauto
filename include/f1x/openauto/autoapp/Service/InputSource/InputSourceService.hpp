@@ -55,6 +55,7 @@ namespace f1x {
             void onButtonEvent(const projection::ButtonEvent &event) override;
 
             void onTouchEvent(const projection::TouchEvent &event) override;
+            void onTouchEvents(const projection::TouchEvent &newevent, const std::vector<projection::TouchEvent> &positions) override;
 
           private:
             using std::enable_shared_from_this<InputSourceService>::shared_from_this;
