@@ -23,6 +23,7 @@
 #include <f1x/openauto/autoapp/Service/IService.hpp>
 #include <f1x/openauto/autoapp/Projection/IInputDevice.hpp>
 #include <f1x/openauto/autoapp/Projection/IInputDeviceEventHandler.hpp>
+#include <f1x/openauto/autoapp/State/AppState.hpp>
 
 namespace f1x {
   namespace openauto {
