@@ -24,7 +24,7 @@ namespace state {
         reallen = controlsock_.readDatagram(data, 1024);
         OPENAUTO_LOG(debug) << "[AppStateSignals] received datagram";
 
-        ioService_.dispatch([this, &reallen, &data]() {
+        ioService_.dispatch([this, reallen, data]() {
           if (reallen < 1)
             return;
 
