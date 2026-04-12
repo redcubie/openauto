@@ -5,14 +5,12 @@ if (AAP_PROTOBUF_LIB_DIRS AND AAP_PROTOBUF_INCLUDE_DIRS)
 else (AAP_PROTOBUF_LIB_DIRS AND AAP_PROTOBUF_INCLUDE_DIRS)
     find_path(AAP_PROTOBUF_INCLUDE_DIR
             NAMES
-            channel/control/GalConstants.pb.h
+            aap_protobuf/channel/control/GalConstants.pb.h
             PATHS
             /usr/include
             /usr/local/include
             /opt/local/include
             /sw/include
-            PATH_SUFFIXES
-            aap_protobuf
     )
 
     find_library(AAP_PROTOBUF_LIB_DIR

@@ -5,14 +5,12 @@ if (AASDK_LIB_DIRS AND AASDK_INCLUDE_DIRS)
 else (AASDK_LIB_DIRS AND AASDK_INCLUDE_DIRS)
     find_path(AASDK_INCLUDE_DIR
             NAMES
-            Version.hpp
+            aasdk/Version.hpp
             PATHS
             /usr/include
             /usr/local/include
             /opt/local/include
             /sw/include
-            PATH_SUFFIXES
-            aasdk
     )
 
     find_library(AASDK_LIB_DIR
