@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5.1)
+cmake_minimum_required(VERSION 3.10)
 
 project(openauto CXX)
 
@@ -86,15 +86,18 @@ else ()
     find_package(Protobuf REQUIRED)
 endif ()
 
+# needed to get libraries through pkg-config mechanisms
+find_package(PkgConfig REQUIRED)
+
 find_package(aap_protobuf REQUIRED)
 find_package(aasdk REQUIRED)
 find_package(Boost REQUIRED COMPONENTS system log_setup log OPTIONAL_COMPONENTS unit_test_framework)
-find_package(libusb-1.0 REQUIRED)
+pkg_check_modules(LIBUSB REQUIRED libusb-1.0)
 find_package(Qt5 COMPONENTS DBus Multimedia MultimediaWidgets Bluetooth Network)
 find_package(OpenSSL REQUIRED)
-find_package(rtaudio REQUIRED)
-find_package(taglib REQUIRED)
-find_package(blkid REQUIRED)
+pkg_check_modules(RTAUDIO REQUIRED rtaudio)
+pkg_check_modules(TAGLIB REQUIRED taglib)
+pkg_check_modules(BLKID REQUIRED blkid)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR}
         ${Qt5Multimedia_INCLUDE_DIRS}
@@ -107,6 +110,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
         ${RTAUDIO_INCLUDE_DIRS}
         ${TAGLIB_INCLUDE_DIRS}
         ${BLKID_INCLUDE_DIRS}
+        ${LIBUSB_INCLUDE_DIRS}
         ${BCM_HOST_INCLUDE_DIRS}
         ${ILCLIENT_INCLUDE_DIRS}
         ${include_directory}
@@ -128,7 +132,6 @@ add_executable(autoapp ${autoapp_source_files})
 target_include_directories(autoapp PUBLIC ${AAP_PROTOBUF_INCLUDE_DIR} ${AASDK_INCLUDE_DIR})
 
 target_link_libraries(autoapp PUBLIC
-        libusb
         ${Boost_LIBRARIES}
         ${Qt5DBus_LIBRARIES}
         ${Qt5Multimedia_LIBRARIES}
@@ -141,6 +144,7 @@ target_link_libraries(autoapp PUBLIC
         ${RTAUDIO_LIBRARIES}
         ${TAGLIB_LIBRARIES}
         ${BLKID_LIBRARIES}
+        ${LIBUSB_LIBRARIES}
         ${PROTOBUF_LIBRARIES}
         ${AAP_PROTOBUF_LIB_DIR}
         ${AASDK_LIB_DIR})
