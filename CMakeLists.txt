@@ -4,7 +4,7 @@ project(openauto CXX)
 
 message(STATUS "OpenAuto")
 
-option(NOPI "Build for Non Raspberry Pi" OFF)
+option(NOPI "Build for Non Raspberry Pi" ON)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
