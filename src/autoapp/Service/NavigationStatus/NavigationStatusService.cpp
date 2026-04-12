@@ -67,7 +67,9 @@ namespace f1x::openauto::autoapp::service::navigationstatus {
     service->set_id(static_cast<uint32_t>(channel_->getId()));
 
     auto navigationStatus = service->mutable_navigation_status_service();
-    (void)navigationStatus; // Suppress unused variable warning
+    // (void)navigationStatus; // Suppress unused variable warning
+    navigationStatus->set_minimum_interval_ms(500);
+    navigationStatus->set_type(aap_protobuf::service::navigationstatus::NavigationStatusService_InstrumentClusterType_ENUM);
   }
 
   void NavigationStatusService::onChannelOpenRequest(
