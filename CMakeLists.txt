@@ -95,7 +95,6 @@ find_package(OpenSSL REQUIRED)
 find_package(rtaudio REQUIRED)
 find_package(taglib REQUIRED)
 find_package(blkid REQUIRED)
-find_package(gps REQUIRED)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR}
         ${Qt5Multimedia_INCLUDE_DIRS}
@@ -142,7 +141,6 @@ target_link_libraries(autoapp PUBLIC
         ${RTAUDIO_LIBRARIES}
         ${TAGLIB_LIBRARIES}
         ${BLKID_LIBRARIES}
-        ${GPS_LIBRARIES}
         ${PROTOBUF_LIBRARIES}
         ${AAP_PROTOBUF_LIB_DIR}
         ${AASDK_LIB_DIR})

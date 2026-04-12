@@ -18,7 +18,6 @@
 
 #pragma once
 
-#include <gps.h>
 #include <aap_protobuf/service/sensorsource/message/DrivingStatus.pb.h>
 #include <aap_protobuf/service/sensorsource/message/SensorType.pb.h>
 #include <aasdk/Channel/SensorSource/SensorSourceService.hpp>
@@ -65,12 +64,6 @@ namespace f1x::openauto::autoapp::service::sensor {
 
     void sendNightData();
 
-    void sendGPSLocationData();
-
-    bool is_file_exist(const char *filename);
-
-    void sensorPolling();
-
     bool firstRun = true;
 
     boost::asio::io_service::strand strand_;
@@ -78,8 +71,6 @@ namespace f1x::openauto::autoapp::service::sensor {
     aasdk::channel::sensorsource::SensorSourceService::Pointer channel_;
     state::AppState::Pointer appstate_;
     std::vector<boost::signals2::connection> signalconns_;
-    struct gps_data_t gpsData_;
-    bool gpsEnabled_ = false;
   };
 
 }
