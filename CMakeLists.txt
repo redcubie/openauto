@@ -65,11 +65,7 @@ if (NOPI)
     message(STATUS "Configuring for Non-Raspberry Pi")
 else()
     message(STATUS "Configuring for RaspberryPi")
-    add_definitions(-DUSE_OMX -DOMX_SKIP64BIT -DRASPBERRYPI3)
-    set(BCM_HOST_LIBRARIES "/opt/vc/lib/libbcm_host.so")
-    set(BCM_HOST_INCLUDE_DIRS "/opt/vc/include")
-    set(ILCLIENT_INCLUDE_DIRS "/opt/vc/src/hello_pi/libs/ilclient")
-    set(ILCLIENT_LIBRARIES "/opt/vc/src/hello_pi/libs/ilclient/libilclient.a;/opt/vc/lib/libvcos.so;/opt/vc/lib/libvcilcs.a;/opt/vc/lib/libvchiq_arm.so")
+    add_definitions(-DRASPBERRYPI3)
 endif ()
 
 # Building on a Mac requires Abseil
@@ -111,8 +107,6 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
         ${TAGLIB_INCLUDE_DIRS}
         ${BLKID_INCLUDE_DIRS}
         ${LIBUSB_INCLUDE_DIRS}
-        ${BCM_HOST_INCLUDE_DIRS}
-        ${ILCLIENT_INCLUDE_DIRS}
         ${include_directory}
         ${PROTOBUF_INCLUDE_DIR}
         ${AAP_PROTOBUF_INCLUDE_DIR}
@@ -138,8 +132,6 @@ target_link_libraries(autoapp PUBLIC
         ${Qt5MultimediaWidgets_LIBRARIES}
         ${Qt5Bluetooth_LIBRARIES}
         ${Qt5Network_LIBRARIES}
-        ${BCM_HOST_LIBRARIES}
-        ${ILCLIENT_LIBRARIES}
         ${WINSOCK2_LIBRARIES}
         ${RTAUDIO_LIBRARIES}
         ${TAGLIB_LIBRARIES}
