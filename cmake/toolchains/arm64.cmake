@@ -1,0 +1,20 @@
+set(CMAKE_SYSTEM_NAME Linux)
+set(CMAKE_SYSTEM_PROCESSOR aarch64)
+
+set(TRIPLE aarch64-linux-gnu)
+
+set(CMAKE_C_COMPILER ${TRIPLE}-gcc)
+set(CMAKE_CXX_COMPILER ${TRIPLE}-g++)
+set(CMAKE_LIBRARY_ARCHITECTURE ${TRIPLE})
+
+# if your rootfs is in another location, you must change it here
+set(CMAKE_SYSROOT /opt/pirootfs)
+
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
+
+set(CMAKE_AUTOMOC_EXECUTABLE "/usr/bin/moc")
+set(CMAKE_AUTOUIC_EXECUTABLE "/usr/bin/uic")
+set(CMAKE_AUTORCC_EXECUTABLE "/usr/bin/rcc")
