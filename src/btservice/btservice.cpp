@@ -29,9 +29,12 @@ namespace btservice = f1x::openauto::btservice;
 int main(int argc, char *argv[]) {
   QLoggingCategory::setFilterRules(QStringLiteral("qt.bluetooth*=true"));
   QCoreApplication qApplication(argc, argv);
+  qApplication.setApplicationName("OpenAuto bluetooth service");
+  qApplication.setApplicationVersion(PROJECT_VERSION);
 
   QCommandLineParser argparser;
   argparser.addHelpOption();
+  argparser.addVersionOption();
 
   QCommandLineOption arg_conffile(QStringList() << "f" << "conf-file",
                                   "Configuration file to use.", // description

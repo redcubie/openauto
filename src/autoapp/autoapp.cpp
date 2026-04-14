@@ -105,9 +105,12 @@ int main(int argc, char* argv[])
     startIOServiceWorkers(ioService, threadPool);
 
     QApplication qApplication(argc, argv);
+    qApplication.setApplicationName("OpenAuto runtime");
+    qApplication.setApplicationVersion(PROJECT_VERSION);
 
     QCommandLineParser argparser;
     argparser.addHelpOption();
+    argparser.addVersionOption();
 
     QCommandLineOption arg_conffile(QStringList() << "f" << "conf-file",
                                     "Configuration file to use.", // description

@@ -144,6 +144,9 @@ target_link_libraries(autoapp PUBLIC
 set(PROGRAM_VERSION_STRING "${OPENAUTO_BUILD_MAJOR_RELEASE}.${OPENAUTO_BUILD_MINOR_RELEASE}.${OPENAUTO_BUILD_INCREMENTAL}+${OPENAUTO_BUILD_DATE}")
 
 message(STATUS "Project Version: ${PROGRAM_VERSION_STRING}")
+add_compile_definitions(
+    PROJECT_VERSION="${PROGRAM_VERSION_STRING}"
+)
 
 set(btservice_sources_directory ${sources_directory}/btservice)
 
