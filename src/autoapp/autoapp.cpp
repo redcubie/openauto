@@ -18,6 +18,7 @@
 
 #include <thread>
 #include <QApplication>
+#include <QCommandLineParser>
 #include <QScreen>
 #include <QDesktopWidget>
 #include <aasdk/USB/USBHub.hpp>
@@ -104,6 +105,21 @@ int main(int argc, char* argv[])
     startIOServiceWorkers(ioService, threadPool);
 
     QApplication qApplication(argc, argv);
+
+    QCommandLineParser argparser;
+    argparser.addHelpOption();
+
+    QCommandLineOption arg_conffile(QStringList() << "f" << "conf-file",
+                                    "Configuration file to use.", // description
+                                    "file",                       // value hint
+                                    "openauto.ini"                // default value
+    );
+    argparser.addOption(arg_conffile);
+
+    argparser.process(qApplication);
+
+    std::string conffilename = argparser.value(arg_conffile).toStdString();
+
     int width = QApplication::desktop()->width();
     int height = QApplication::desktop()->height();
 
@@ -129,7 +145,8 @@ int main(int argc, char* argv[])
     OPENAUTO_LOG(info) << "[AutoApp] Display width: " << width;
     OPENAUTO_LOG(info) << "[AutoApp] Display height: " << height;
 
-    auto configuration = std::make_shared<autoapp::configuration::Configuration>();
+    OPENAUTO_LOG(info) << "Using configuration file: " << conffilename;
+    auto configuration = std::make_shared<autoapp::configuration::Configuration>(conffilename);
 
     auto appstate = std::make_shared<autoapp::state::AppState>(ioService, configuration, &qApplication);
 

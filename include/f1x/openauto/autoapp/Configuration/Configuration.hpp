@@ -38,7 +38,7 @@ namespace configuration
 class Configuration: public IConfiguration
 {
 public:
-    Configuration();
+    Configuration(std::string filename);
 
     void load() override;
     void reset() override;
@@ -190,7 +190,7 @@ private:
 
     AudioOutputBackendType audioOutputBackendType_;
 
-    static const std::string cConfigFileName;
+    std::string ConfigFileName_;
 
     static const std::string cGeneralShowClockKey;
 

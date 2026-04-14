@@ -17,6 +17,7 @@
 */
 
 #include <QCoreApplication>
+#include <QCommandLineParser>
 #include <QtBluetooth>
 #include <f1x/openauto/Common/Log.hpp>
 #include <f1x/openauto/autoapp/Configuration/Configuration.hpp>
@@ -29,7 +30,21 @@ int main(int argc, char *argv[]) {
   QLoggingCategory::setFilterRules(QStringLiteral("qt.bluetooth*=true"));
   QCoreApplication qApplication(argc, argv);
 
-  auto configuration = std::make_shared<f1x::openauto::autoapp::configuration::Configuration>();
+  QCommandLineParser argparser;
+  argparser.addHelpOption();
+
+  QCommandLineOption arg_conffile(QStringList() << "f" << "conf-file",
+                                  "Configuration file to use.", // description
+                                  "file",                       // value hint
+                                  "openauto.ini"                // default value
+  );
+  argparser.addOption(arg_conffile);
+
+  argparser.process(qApplication);
+
+  std::string conffilename = argparser.value(arg_conffile).toStdString();
+  OPENAUTO_LOG(info) << "Using configuration file: " << conffilename;
+  auto configuration = std::make_shared<f1x::openauto::autoapp::configuration::Configuration>(conffilename);
 
   try {
     auto androidBluetoothService = std::make_shared<btservice::AndroidBluetoothService>();

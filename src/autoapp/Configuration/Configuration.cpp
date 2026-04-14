@@ -26,8 +26,6 @@
 namespace f1x::openauto::autoapp::configuration
 {
 
-const std::string Configuration::cConfigFileName = "openauto.ini";
-
 const std::string Configuration::cGeneralShowClockKey = "General.ShowClock";
 
 const std::string Configuration::cGeneralShowBigClockKey = "General.ShowBigClock";
@@ -95,8 +93,9 @@ const std::string Configuration::cInputBackButtonKey = "Input.BackButton";
 const std::string Configuration::cInputEnterButtonKey = "Input.EnterButton";
 const std::string Configuration::cInputNavButtonKey = "Input.NavButton";
 
-Configuration::Configuration()
+Configuration::Configuration(std::string filename)
 {
+    this->ConfigFileName_ = filename;
     this->load();
 }
 
@@ -106,7 +105,7 @@ void Configuration::load()
 
     try
     {
-        boost::property_tree::ini_parser::read_ini(cConfigFileName, iniConfig);
+        boost::property_tree::ini_parser::read_ini(ConfigFileName_, iniConfig);
 
         driverPosition_ = static_cast<aap_protobuf::service::control::message::DriverPosition>(iniConfig.get<uint32_t>(
             cGeneralDriverPositionKey, aap_protobuf::service::control::message::DriverPosition::DRIVER_POSITION_LEFT));
@@ -167,7 +166,7 @@ void Configuration::load()
     }
     catch(const boost::property_tree::ini_parser_error& e)
     {
-        OPENAUTO_LOG(warning) << "[Configuration] failed to read configuration file: " << cConfigFileName
+        OPENAUTO_LOG(warning) << "[Configuration] failed to read configuration file: " << ConfigFileName_
                             << ", error: " << e.what()
                             << ". Using default configuration.";
         this->reset();
@@ -274,7 +273,7 @@ void Configuration::save()
     iniConfig.put<bool>(cAudioChannelTelephonyEnabled, _audioChannelEnabledTelephony);
 
   iniConfig.put<uint32_t>(cAudioOutputBackendType, static_cast<uint32_t>(audioOutputBackendType_));
-    boost::property_tree::ini_parser::write_ini(cConfigFileName, iniConfig);
+    boost::property_tree::ini_parser::write_ini(ConfigFileName_, iniConfig);
 }
 
 bool Configuration::hasTouchScreen() const
