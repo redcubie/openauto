@@ -17,7 +17,7 @@
 */
 #include <fstream>
 #include <string>
-#include <f1x/openauto/autoapp/UI/SettingsWindow.hpp>
+#include <f1x/openauto/confapp/UI/SettingsWindow.hpp>
 #include <QBluetoothLocalDevice>
 #include <QBluetoothHostInfo>
 #include <QComboBox>

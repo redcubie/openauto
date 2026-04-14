@@ -167,6 +167,25 @@ target_link_libraries(btservice PUBLIC
 set_target_properties(autoapp
         PROPERTIES VERSION ${PROGRAM_VERSION_STRING} SOVERSION ${OPENAUTO_BUILD_INCREMENTAL})
 
+set(confapp_sources_directory ${sources_directory}/confapp)
+set(confapp_include_directory ${include_directory}/f1x/openauto/confapp)
+file(GLOB_RECURSE confapp_source_files
+${confapp_sources_directory}/*.cpp ${confapp_sources_directory}/*.ui ${confapp_include_directory}/*.hpp ${common_include_directory}/*.hpp ${resources_directory}/*.qrc 
+${autoapp_sources_directory}/Configuration/*.cpp ${autoapp_includes_directory}/Configuration/*.hpp
+)
+add_executable(confapp ${confapp_source_files})
+
+target_link_libraries(confapp PUBLIC
+        ${Boost_LIBRARIES}
+        ${Qt5DBus_LIBRARIES}
+        ${Qt5Multimedia_LIBRARIES}
+        ${Qt5MultimediaWidgets_LIBRARIES}
+        ${Qt5Bluetooth_LIBRARIES}
+        ${Qt5Network_LIBRARIES}
+        ${Qt5Quick_LIBRARIES}
+        ${Qt5QuickWidgets_LIBRARIES}
+        )
+
 # Install rules
 #install(TARGETS autoapp btservice
 #        EXPORT aasdkTargets

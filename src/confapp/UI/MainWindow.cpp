@@ -17,7 +17,7 @@
 */
 
 #include <QApplication>
-#include <f1x/openauto/autoapp/UI/MainWindow.hpp>
+#include <f1x/openauto/confapp/UI/MainWindow.hpp>
 #include <QFileInfo>
 #include <QFile>
 #include "ui_mainwindow.h"

@@ -34,8 +34,6 @@
 #include <f1x/openauto/autoapp/Service/AndroidAutoEntityFactory.hpp>
 #include <f1x/openauto/autoapp/Service/ServiceFactory.hpp>
 #include <f1x/openauto/autoapp/Configuration/Configuration.hpp>
-#include <f1x/openauto/autoapp/UI/MainWindow.hpp>
-#include <f1x/openauto/autoapp/UI/SettingsWindow.hpp>
 #include <f1x/openauto/autoapp/UI/ConnectDialog.hpp>
 #include <f1x/openauto/autoapp/UI/WarningDialog.hpp>
 #include <f1x/openauto/Common/Log.hpp>
@@ -153,15 +151,6 @@ int main(int argc, char* argv[])
 
     auto appstate = std::make_shared<autoapp::state::AppState>(ioService, configuration, &qApplication);
 
-    autoapp::ui::MainWindow mainWindow(configuration);
-    //mainWindow.setWindowFlags(Qt::WindowStaysOnTopHint);
-
-    autoapp::ui::SettingsWindow settingsWindow(configuration);
-    //settingsWindow.setWindowFlags(Qt::WindowStaysOnTopHint);
-
-    settingsWindow.setFixedSize(width, height);
-    settingsWindow.adjustSize();
-
     autoapp::configuration::RecentAddressesList recentAddressesList(7);
     recentAddressesList.read();
 
@@ -175,33 +164,11 @@ int main(int argc, char* argv[])
     warningdialog.move((width - 500)/2,(height-300)/2);
 
 
-    QObject::connect(&mainWindow, &autoapp::ui::MainWindow::exit, []() { system("touch /tmp/shutdown"); std::exit(0); });
-    QObject::connect(&mainWindow, &autoapp::ui::MainWindow::reboot, []() { system("touch /tmp/reboot"); std::exit(0); });
-    QObject::connect(&mainWindow, &autoapp::ui::MainWindow::openSettings, &settingsWindow, &autoapp::ui::SettingsWindow::showFullScreen);
-    QObject::connect(&mainWindow, &autoapp::ui::MainWindow::openSettings, &settingsWindow, &autoapp::ui::SettingsWindow::show_tab1);
-    QObject::connect(&mainWindow, &autoapp::ui::MainWindow::openSettings, &settingsWindow, &autoapp::ui::SettingsWindow::loadSystemValues);
-    QObject::connect(&mainWindow, &autoapp::ui::MainWindow::openConnectDialog, &connectdialog, &autoapp::ui::ConnectDialog::loadClientList);
-    QObject::connect(&mainWindow, &autoapp::ui::MainWindow::openConnectDialog, &connectdialog, &autoapp::ui::ConnectDialog::exec);
-
     if (configuration->showCursor() == false) {
         qApplication.setOverrideCursor(Qt::BlankCursor);
     } else {
         qApplication.setOverrideCursor(Qt::ArrowCursor);
     }
-
-    QObject::connect(&mainWindow, &autoapp::ui::MainWindow::TriggerScriptNight, [&qApplication]() {
-        system("/opt/crankshaft/service_daynight.sh app night");
-        OPENAUTO_LOG(debug) << "[AutoApp] MainWindow Night.";
-    });
-
-    QObject::connect(&mainWindow, &autoapp::ui::MainWindow::TriggerScriptDay, [&qApplication]() {
-        system("/opt/crankshaft/service_daynight.sh app day");
-        OPENAUTO_LOG(debug) << "[AutoApp] MainWindow Day.";
-    });
-
-    mainWindow.showFullScreen();
-    mainWindow.setFixedSize(width, height);
-    mainWindow.adjustSize();
 
     aasdk::usb::USBWrapper usbWrapper(usbContext);
     aasdk::usb::AccessoryModeQueryFactory queryFactory(usbWrapper, ioService);
@@ -215,51 +182,6 @@ int main(int argc, char* argv[])
 
     QObject::connect(&connectdialog, &autoapp::ui::ConnectDialog::connectionSucceed, [&app](auto socket) {
         app->start(std::move(socket));
-    });
-
-    QObject::connect(&mainWindow, &autoapp::ui::MainWindow::TriggerAppStart, [&appstate]() {
-        OPENAUTO_LOG(debug) << "[AutoApp] TriggerAppStart: Manual start android auto.";
-        try {
-            appstate->appsignals.changeVideoFocus(true);
-        } catch (...) {
-            OPENAUTO_LOG(error) << "[AutoApp] TriggerAppStart: error";
-        }
-    });
-
-    QObject::connect(&mainWindow, &autoapp::ui::MainWindow::TriggerAppStop, [&app]() {
-        try {
-            if (std::ifstream("/tmp/android_device")) {
-                OPENAUTO_LOG(debug) << "[AutoApp] TriggerAppStop: Manual stop usb android auto.";
-                app->disableAutostartEntity = true;
-                system("/usr/local/bin/autoapp_helper usbreset");
-                usleep(500000);
-                try {
-                    app->stop();
-                    //app->pause();
-                } catch (...) {
-                    OPENAUTO_LOG(error) << "[AutoApp] TriggerAppStop: stop();";
-                }
-
-            } else {
-                OPENAUTO_LOG(debug) << "[AutoApp] TriggerAppStop: Manual stop wifi android auto.";
-                try {
-                    app->onAndroidAutoQuit();
-                    //app->pause();
-                } catch (...) {
-                    OPENAUTO_LOG(error) << "[Autoapp] TriggerAppStop: stop();";
-                }
-
-            }
-        } catch (...) {
-            OPENAUTO_LOG(error) << "[AutoApp] Exception in manual stop android auto.";
-        }
-    });
-
-    QObject::connect(&mainWindow, &autoapp::ui::MainWindow::CloseAllDialogs, [&settingsWindow, &connectdialog, &warningdialog]() {
-        settingsWindow.close();
-        connectdialog.close();
-        warningdialog.close();
-        OPENAUTO_LOG(debug) << "[AutoApp] Close all possible open dialogs.";
     });
 
     if (configuration->hideWarning() == false) {
