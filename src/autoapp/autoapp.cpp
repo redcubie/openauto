@@ -34,8 +34,8 @@
 #include <f1x/openauto/autoapp/Service/AndroidAutoEntityFactory.hpp>
 #include <f1x/openauto/autoapp/Service/ServiceFactory.hpp>
 #include <f1x/openauto/autoapp/Configuration/Configuration.hpp>
-#include <f1x/openauto/autoapp/UI/ConnectDialog.hpp>
-#include <f1x/openauto/autoapp/UI/WarningDialog.hpp>
+// #include <f1x/openauto/autoapp/UI/ConnectDialog.hpp>
+// #include <f1x/openauto/autoapp/UI/WarningDialog.hpp>
 #include <f1x/openauto/Common/Log.hpp>
 
 namespace autoapp = f1x::openauto::autoapp;
@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
     startUSBWorkers(ioService, usbContext, threadPool);
     startIOServiceWorkers(ioService, threadPool);
 
-    QApplication qApplication(argc, argv);
+    QGuiApplication qApplication(argc, argv);
     qApplication.setApplicationName("OpenAuto runtime");
     qApplication.setApplicationVersion(PROJECT_VERSION);
 
@@ -121,47 +121,47 @@ int main(int argc, char* argv[])
 
     std::string conffilename = argparser.value(arg_conffile).toStdString();
 
-    int width = QApplication::desktop()->width();
-    int height = QApplication::desktop()->height();
+    // int width = QApplication::desktop()->width();
+    // int height = QApplication::desktop()->height();
 
-    for (QScreen *screen : qApplication.screens()) {
-      OPENAUTO_LOG(info) << "[AutoApp] Screen name: " << screen->name().toStdString();
-      OPENAUTO_LOG(info) << "[AutoApp] Screen geometry: " << screen->geometry().width(); // This includes position and size
-      OPENAUTO_LOG(info) << "[AutoApp] Screen physical size: " << screen->physicalSize().width(); // Size in millimeters
-    }
+    // for (QScreen *screen : qApplication.screens()) {
+    //   OPENAUTO_LOG(info) << "[AutoApp] Screen name: " << screen->name().toStdString();
+    //   OPENAUTO_LOG(info) << "[AutoApp] Screen geometry: " << screen->geometry().width(); // This includes position and size
+    //   OPENAUTO_LOG(info) << "[AutoApp] Screen physical size: " << screen->physicalSize().width(); // Size in millimeters
+    // }
 
-    QScreen *primaryScreen = QGuiApplication::primaryScreen();
+    // QScreen *primaryScreen = QGuiApplication::primaryScreen();
 
-    // Check if a primary screen was found
-    if (primaryScreen) {
-      // Get the geometry of the primary screen
-      QRect screenGeometry = primaryScreen->geometry();
-      width = screenGeometry.width();
-      height = screenGeometry.height();
-      OPENAUTO_LOG(info) << "[AutoApp] Using gemoetry from primary screen.";
-    } else {
-      OPENAUTO_LOG(info) << "[AutoApp] Unable to find primary screen, using default values.";
-    }
+    // // Check if a primary screen was found
+    // if (primaryScreen) {
+    //   // Get the geometry of the primary screen
+    //   QRect screenGeometry = primaryScreen->geometry();
+    //   width = screenGeometry.width();
+    //   height = screenGeometry.height();
+    //   OPENAUTO_LOG(info) << "[AutoApp] Using gemoetry from primary screen.";
+    // } else {
+    //   OPENAUTO_LOG(info) << "[AutoApp] Unable to find primary screen, using default values.";
+    // }
 
-    OPENAUTO_LOG(info) << "[AutoApp] Display width: " << width;
-    OPENAUTO_LOG(info) << "[AutoApp] Display height: " << height;
+    // OPENAUTO_LOG(info) << "[AutoApp] Display width: " << width;
+    // OPENAUTO_LOG(info) << "[AutoApp] Display height: " << height;
 
     OPENAUTO_LOG(info) << "Using configuration file: " << conffilename;
     auto configuration = std::make_shared<autoapp::configuration::Configuration>(conffilename);
 
     auto appstate = std::make_shared<autoapp::state::AppState>(ioService, configuration, &qApplication);
 
-    autoapp::configuration::RecentAddressesList recentAddressesList(7);
-    recentAddressesList.read();
+    // autoapp::configuration::RecentAddressesList recentAddressesList(7);
+    // recentAddressesList.read();
 
     aasdk::tcp::TCPWrapper tcpWrapper;
-    autoapp::ui::ConnectDialog connectdialog(ioService, tcpWrapper, recentAddressesList);
-    //connectdialog.setWindowFlags(Qt::WindowStaysOnTopHint);
-    connectdialog.move((width - 500)/2,(height-300)/2);
+    // autoapp::ui::ConnectDialog connectdialog(ioService, tcpWrapper, recentAddressesList);
+    // //connectdialog.setWindowFlags(Qt::WindowStaysOnTopHint);
+    // connectdialog.move((width - 500)/2,(height-300)/2);
 
-    autoapp::ui::WarningDialog warningdialog;
-    //warningdialog.setWindowFlags(Qt::WindowStaysOnTopHint);
-    warningdialog.move((width - 500)/2,(height-300)/2);
+    // autoapp::ui::WarningDialog warningdialog;
+    // //warningdialog.setWindowFlags(Qt::WindowStaysOnTopHint);
+    // warningdialog.move((width - 500)/2,(height-300)/2);
 
 
     if (configuration->showCursor() == false) {
@@ -180,13 +180,13 @@ int main(int argc, char* argv[])
     auto connectedAccessoriesEnumerator(std::make_shared<aasdk::usb::ConnectedAccessoriesEnumerator>(usbWrapper, ioService, queryChainFactory));
     auto app = std::make_shared<autoapp::App>(ioService, usbWrapper, tcpWrapper, androidAutoEntityFactory, std::move(usbHub), std::move(connectedAccessoriesEnumerator), appstate);
 
-    QObject::connect(&connectdialog, &autoapp::ui::ConnectDialog::connectionSucceed, [&app](auto socket) {
-        app->start(std::move(socket));
-    });
+    // QObject::connect(&connectdialog, &autoapp::ui::ConnectDialog::connectionSucceed, [&app](auto socket) {
+    //     app->start(std::move(socket));
+    // });
 
-    if (configuration->hideWarning() == false) {
-        warningdialog.show();
-    }
+    // if (configuration->hideWarning() == false) {
+    //     warningdialog.show();
+    // }
 
     app->waitForUSBDevice();
 
