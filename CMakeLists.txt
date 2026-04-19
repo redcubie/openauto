@@ -89,7 +89,7 @@ find_package(aap_protobuf REQUIRED)
 find_package(aasdk REQUIRED)
 find_package(Boost REQUIRED COMPONENTS system log_setup log OPTIONAL_COMPONENTS unit_test_framework)
 pkg_check_modules(LIBUSB REQUIRED libusb-1.0)
-find_package(Qt5 COMPONENTS DBus Multimedia MultimediaWidgets Bluetooth Network)
+find_package(Qt5 COMPONENTS DBus Multimedia MultimediaWidgets Bluetooth Network Quick QuickWidgets)
 find_package(OpenSSL REQUIRED)
 pkg_check_modules(RTAUDIO REQUIRED rtaudio)
 pkg_check_modules(TAGLIB REQUIRED taglib)
@@ -101,6 +101,8 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
         ${Qt5Widgets_INCLUDE_DIRS}
         ${Qt5Bluetooth_INCLUDE_DIRS}
         ${Qt5Network_INCLUDE_DIRS}
+        ${Qt5Quick_INCLUDE_DIRS}
+        ${Qt5QuickWidgets_INCLUDE_DIRS}
         ${Boost_INCLUDE_DIRS}
         ${OPENSSL_INCLUDE_DIR}
         ${RTAUDIO_INCLUDE_DIRS}
@@ -132,6 +134,8 @@ target_link_libraries(autoapp PUBLIC
         ${Qt5MultimediaWidgets_LIBRARIES}
         ${Qt5Bluetooth_LIBRARIES}
         ${Qt5Network_LIBRARIES}
+        ${Qt5Quick_LIBRARIES}
+        ${Qt5QuickWidgets_LIBRARIES}
         ${WINSOCK2_LIBRARIES}
         ${RTAUDIO_LIBRARIES}
         ${TAGLIB_LIBRARIES}
