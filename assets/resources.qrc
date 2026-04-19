@@ -39,5 +39,7 @@
         <file>black.png</file>
         <file>album-hot.png</file>
         <file>Roboto-Regular.ttf</file>
+
+        <file>videooutput.qml</file>
     </qresource>
 </RCC>

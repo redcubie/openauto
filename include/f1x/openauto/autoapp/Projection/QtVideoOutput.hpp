@@ -20,6 +20,7 @@
 
 #include <QMediaPlayer>
 #include <QVideoWidget>
+#include <QQuickWidget>
 #include <boost/noncopyable.hpp>
 #include <f1x/openauto/autoapp/Projection/VideoOutput.hpp>
 #include <f1x/openauto/autoapp/Projection/SequentialBuffer.hpp>
@@ -61,8 +62,8 @@ protected slots:
 
 private:
     SequentialBuffer videoBuffer_;
-    std::unique_ptr<QVideoWidget> videoWidget_;
-    std::unique_ptr<QMediaPlayer> mediaPlayer_;
+    QMediaPlayer* mediaPlayer_;
+    QWindow* window_;
 };
 
 }

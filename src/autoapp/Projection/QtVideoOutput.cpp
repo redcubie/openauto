@@ -17,6 +17,7 @@
 */
 
 #include <QApplication>
+#include <QQmlApplicationEngine>
 #include <f1x/openauto/autoapp/Projection/QtVideoOutput.hpp>
 #include <f1x/openauto/Common/Log.hpp>
 
@@ -43,8 +44,14 @@ QtVideoOutput::QtVideoOutput(configuration::IConfiguration::Pointer configuratio
 void QtVideoOutput::createVideoOutput()
 {
     OPENAUTO_LOG(info) << "[QtVideoOutput] createVideoOutput()";
-    videoWidget_ = std::make_unique<QVideoWidget>();
-    mediaPlayer_ = std::make_unique<QMediaPlayer>(nullptr, QMediaPlayer::StreamPlayback);
+    
+    QQmlApplicationEngine *engine = new QQmlApplicationEngine();
+    engine->load(QUrl("qrc:/videooutput.qml"));
+    QObject *root = engine->rootObjects().first();
+    window_ = qobject_cast<QWindow *>(root);
+
+    QObject* ptr = window_->findChild<QObject *>(QString("player"));
+    mediaPlayer_ = qvariant_cast<QMediaPlayer*>(ptr->property("mediaObject"));
 }
 
 
@@ -81,13 +88,8 @@ void QtVideoOutput::write(uint64_t, const aasdk::common::DataConstBuffer& buffer
 
 void QtVideoOutput::onStartPlayback()
 {
-    videoWidget_->setAttribute(Qt::WA_OpaquePaintEvent, true);
-    videoWidget_->setAttribute(Qt::WA_NoSystemBackground, true);
-    videoWidget_->setAspectRatioMode(Qt::IgnoreAspectRatio);
-    videoWidget_->setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
-
-    mediaPlayer_->setVideoOutput(videoWidget_.get());
     mediaPlayer_->setMedia(QMediaContent(), &videoBuffer_);
+    mediaPlayer_->setPlaybackRate(0);
     mediaPlayer_->play();
 
     // TODO: This only outputs a line if there's an error - FIXME - Output a proper status instead
@@ -96,25 +98,22 @@ void QtVideoOutput::onStartPlayback()
 
 void QtVideoOutput::onStopPlayback()
 {
-    videoWidget_->hide();
-    videoWidget_->clearFocus();
+    window_->hide();
     mediaPlayer_->stop();
     mediaPlayer_->setMedia(QMediaContent());
 }
 
 void QtVideoOutput::onPausePlayback()
 {
-    videoWidget_->hide();
-    videoWidget_->clearFocus();
+    window_->hide();
 }
 
 void QtVideoOutput::onResumePlayback()
 {
-    videoWidget_->setFocus();
-    videoWidget_->raise();
-    videoWidget_->setFullScreen(true);
-    videoWidget_->show();
-    videoWidget_->activateWindow();
+    window_->focusObject();
+    window_->raise();
+    window_->showFullScreen();
+    window_->requestActivate();
 }
 
 }
